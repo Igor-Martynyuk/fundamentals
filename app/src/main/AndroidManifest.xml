@@ -16,15 +16,15 @@
             android:name=".start.splash.SplashActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.Activity.Splash">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity android:name=".start.menu.MenuActivity" />
+        <activity android:name=".tasks.copmponents.PingDashboardActivity" />
 
     </application>
 
