@@ -2,7 +2,7 @@
     <string name="app_name">Fundamentals</string>
 
     <string-array name="lessons">
-
+        <item>Common</item>
     </string-array>
 
 </resources>
