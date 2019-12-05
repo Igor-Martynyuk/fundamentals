@@ -27,6 +27,11 @@
 
         <activity android:name=".task.PingDashboardActivity" />
 
+        <service
+            android:name=".task.PingService"
+            android:enabled="true"
+            android:exported="false" />
+
     </application>
 
 </manifest>
