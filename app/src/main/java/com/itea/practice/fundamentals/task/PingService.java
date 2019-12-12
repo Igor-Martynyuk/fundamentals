@@ -16,12 +16,16 @@ public class PingService extends Service {
     private PingExecutor.CallBack callBack = new PingExecutor.CallBack() {
         @Override
         public void onSuccess(long started, long finished) {
-            binder.onPing(new PingLog(true, finished - started, started));
+            if (binder != null) {
+                binder.onPing(new PingLog(true, finished - started, started));
+            }
         }
 
         @Override
         public void onFailure(long started, long finished) {
-            binder.onPing(new PingLog(false, finished - started, started));
+            if (binder != null) {
+                binder.onPing(new PingLog(false, finished - started, started));
+            }
         }
     };
 
@@ -41,14 +45,11 @@ public class PingService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        binder = new PingServiceBinder();
-        return binder;
-    }
+        if (binder == null) {
+            binder = new PingServiceBinder();
+        }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        binder = null;
-        return super.onUnbind(intent);
+        return binder;
     }
 
     @Override

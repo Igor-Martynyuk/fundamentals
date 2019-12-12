@@ -28,10 +28,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_default"
+        android:text="@string/connection_none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="WiFi" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/label_status"
@@ -50,10 +50,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_default"
         android:layout_marginTop="@dimen/spacing_default"
+        android:text="@string/status_inactive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
-        app:layout_constraintTop_toBottomOf="@id/output_connection"
-        tools:text="@string/status_active" />
+        app:layout_constraintTop_toBottomOf="@id/output_connection" />
 
     <TextView
         android:id="@+id/label_delay"
@@ -71,10 +71,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_default"
         android:layout_marginTop="@dimen/spacing_default"
+        android:text="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
         app:layout_constraintTop_toBottomOf="@id/output_status"
-        tools:text="24ms" />
+        tools:ignore="HardcodedText" />
 
     <ImageView
         android:id="@+id/btn_tumbler"
