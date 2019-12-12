@@ -7,12 +7,14 @@ public class PingExecutor {
     private volatile AtomicReference<String> address = new AtomicReference<>();
     private volatile AtomicReference<CallBack> callBack = new AtomicReference<>();
 
+    private boolean isActive = false;
     private final Action action = new Action();
     private final Thread worker = new Thread(this.action);
 
     public void execute(CallBack callBack, String address) {
-        if (worker.isAlive() && !worker.isInterrupted()) return;
+        if (isActive) return;
 
+        this.isActive = true;
         this.callBack.set(callBack);
         this.address.set(address);
 
@@ -20,18 +22,23 @@ public class PingExecutor {
     }
 
     public void interrupt() {
-        if (!worker.isAlive() || worker.isInterrupted()) return;
+        if (!this.isActive) return;
 
+        this.isActive = false;
         this.worker.interrupt();
 
         this.callBack.set(null);
         this.address.set(null);
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
     private class Action implements Runnable {
         @Override
         public void run() {
-            while (true) {
+            while (isActive) {
                 try {
                     Thread.sleep(1000L);
                 } catch (InterruptedException e) {

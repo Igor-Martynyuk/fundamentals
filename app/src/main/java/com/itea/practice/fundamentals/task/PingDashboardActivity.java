@@ -25,6 +25,8 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     private final String KEY_STATE_STATUS = "state_status";
     private final String KEY_STATE_DELAY = "state_delay";
 
+    private String currentConnectionType = null;
+
     private InternetReceiver receiver;
 
     private ImageView btnTumbler;
@@ -39,6 +41,13 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         }
     };
 
+    private PingServiceBinder.ExecutionStateListener stateListener = new PingServiceBinder.ExecutionStateListener() {
+        @Override
+        public void onStateChanged(boolean state) {
+            outputStatus.setText(getString(state ? R.string.status_active : R.string.status_inactive));
+        }
+    };
+
     private PingServiceBinder pingBinder;
     private ServiceConnection pingConnection = new ServiceConnection() {
         @Override
@@ -46,12 +55,19 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
             PingDashboardActivity.this.pingBinder = (PingServiceBinder) binder;
             PingDashboardActivity.this.pingBinder.setOnPingListener(pingListener);
 
+            pingBinder.setStateListener(stateListener);
+
+            if (currentConnectionType != null)
+                pingBinder.startPingProcess();
+
             changeIndicatorColor(R.color.accent);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            PingDashboardActivity.this.pingBinder = null;
+            pingBinder.stopPingProcess();
+            pingBinder = null;
+
             changeIndicatorColor(R.color.highlight_inactive);
         }
     };
@@ -96,6 +112,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
                                     0
                             );
                         } else {
+                            PingDashboardActivity.this.pingBinder.stopPingProcess();
                             PingDashboardActivity.this.unbindService(pingConnection);
                             PingDashboardActivity.this.pingBinder = null;
                             PingDashboardActivity.this.changeIndicatorColor(R.color.highlight_inactive);
@@ -169,16 +186,39 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         this.receiver.removeListener(this);
         this.unregisterReceiver(this.receiver);
 
-        this.unbindService(pingConnection);
+        if (pingBinder != null) {
+            this.unbindService(pingConnection);
+        }
     }
 
     @Override
     public void onInternetChanged(@Nullable String type) {
-        this.outputConnection.setText(
-                type == null
-                        ? getString(R.string.connection_none)
-                        : type
-        );
+        if (currentConnectionType == null && type == null) return;
+
+        if (currentConnectionType == null) {
+
+            currentConnectionType = type;
+            outputConnection.setText(type);
+
+            if (pingBinder != null && !pingBinder.isActive()) {
+                pingBinder.startPingProcess();
+            }
+
+        } else if (type == null) {
+            currentConnectionType = null;
+            outputConnection.setText(getString(R.string.connection_none));
+
+            if (pingBinder != null && pingBinder.isActive()) {
+                pingBinder.stopPingProcess();
+            }
+
+        } else if (!currentConnectionType.equals(type)) {
+
+            currentConnectionType = type;
+            outputConnection.setText(type);
+
+        }
+
     }
 
 }

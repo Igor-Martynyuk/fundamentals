@@ -32,7 +32,6 @@ public class PingService extends Service {
     @Override
     public void onCreate() {
         this.executor = new PingExecutor();
-        this.executor.execute(this.callBack, "8.8.8.8");
 
         super.onCreate();
     }
@@ -46,7 +45,26 @@ public class PingService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         if (binder == null) {
-            binder = new PingServiceBinder();
+            binder = new PingServiceBinder() {
+                @Override
+                boolean isActive() {
+                    return executor.isActive();
+                }
+
+                @Override
+                void startPingProcess() {
+                    super.startPingProcess();
+
+                    executor.execute(callBack, "8.8.8.8");
+                }
+
+                @Override
+                void stopPingProcess() {
+                    super.stopPingProcess();
+
+                    executor.interrupt();
+                }
+            };
         }
 
         return binder;
@@ -55,13 +73,6 @@ public class PingService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-    }
-
-    @Override
-    public void onDestroy() {
-        this.executor.interrupt();
-
-        super.onDestroy();
     }
 
 }
