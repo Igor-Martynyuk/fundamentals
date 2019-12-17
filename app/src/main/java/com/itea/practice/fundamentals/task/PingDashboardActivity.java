@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -18,9 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.itea.practice.components.PingLog;
-import com.itea.practice.components.R;
+import com.itea.practice.fundamentals.R;
 
-public class PingDashboardActivity extends AppCompatActivity implements InternetReceiver.Listener {
+public class PingDashboardActivity extends AppCompatActivity implements InternetReceiver.Listener, View.OnClickListener {
     private final String KEY_STATE_CONNECTION = "state_connection";
     private final String KEY_STATE_STATUS = "state_status";
     private final String KEY_STATE_DELAY = "state_delay";
@@ -30,6 +31,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     private InternetReceiver receiver;
 
     private ImageView btnTumbler;
+    private View btnHistory;
     private TextView outputConnection;
     private TextView outputStatus;
     private TextView outputDelay;
@@ -100,28 +102,10 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         this.outputDelay = findViewById(R.id.output_delay);
 
         this.btnTumbler = findViewById(R.id.btn_tumbler);
-        this.btnTumbler.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (PingDashboardActivity.this.pingBinder == null) {
-                            PingDashboardActivity.this.startService(new Intent(PingDashboardActivity.this, PingService.class));
-                            PingDashboardActivity.this.bindService(
-                                    new Intent(PingDashboardActivity.this, PingService.class),
-                                    PingDashboardActivity.this.pingConnection,
-                                    0
-                            );
-                        } else {
-                            PingDashboardActivity.this.pingBinder.stopPingProcess();
-                            PingDashboardActivity.this.unbindService(pingConnection);
-                            PingDashboardActivity.this.pingBinder = null;
-                            PingDashboardActivity.this.changeIndicatorColor(R.color.highlight_inactive);
+        this.btnTumbler.setOnClickListener(this);
 
-                            PingDashboardActivity.this.stopService(new Intent(PingDashboardActivity.this, PingService.class));
-                        }
-                    }
-                }
-        );
+        this.btnHistory = findViewById(R.id.btn_history);
+        this.btnHistory.setOnClickListener(this);
     }
 
     @Override
@@ -155,6 +139,14 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     @Override
     protected void onResume() {
         super.onResume();
+
+        getContentResolver().query(
+                Uri.parse(PingHistoryProvider.SCHEME + PingHistoryProvider.AUTHORITIES),
+                null,
+                null,
+                null,
+                null
+        );
 
         this.receiver = new InternetReceiver();
         IntentFilter filter = new IntentFilter();
@@ -221,4 +213,35 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_tumbler:
+
+                if (this.pingBinder == null) {
+
+                    this.startService(new Intent(this, PingService.class));
+                    this.bindService(
+                            new Intent(this, PingService.class),
+                            this.pingConnection,
+                            0
+                    );
+
+                } else {
+
+                    this.pingBinder.stopPingProcess();
+                    this.unbindService(pingConnection);
+                    this.pingBinder = null;
+                    this.changeIndicatorColor(R.color.highlight_inactive);
+
+                    this.stopService(new Intent(PingDashboardActivity.this, PingService.class));
+
+                }
+
+                break;
+            case R.id.btn_history:
+                startActivity(new Intent(this, PingHistoryActivity.class));
+                break;
+        }
+    }
 }
