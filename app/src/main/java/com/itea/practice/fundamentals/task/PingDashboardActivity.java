@@ -39,6 +39,11 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     private PingServiceBinder.PingListener pingListener = new PingServiceBinder.PingListener() {
         @Override
         public void onPing(PingLog log) {
+            getContentResolver().insert(
+                    Uri.parse(PingHistoryProvider.SCHEME + PingHistoryProvider.AUTHORITIES),
+                    PingHistoryProvider.logToValues(log)
+            );
+
             outputDelay.setText(String.valueOf(log.getDuration()));
         }
     };

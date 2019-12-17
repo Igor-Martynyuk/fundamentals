@@ -11,7 +11,7 @@ public class PingLog {
         this.date = date;
     }
 
-    public boolean isSuccessful() {
+    public boolean getResult() {
         return result;
     }
 
