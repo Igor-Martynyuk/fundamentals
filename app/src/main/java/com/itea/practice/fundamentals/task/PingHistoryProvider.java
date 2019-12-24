@@ -9,20 +9,27 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.itea.practice.components.PingFilter;
 import com.itea.practice.components.PingLog;
 import com.itea.practice.components.PingStatsStorage;
 
 import java.security.InvalidParameterException;
+import java.util.Calendar;
+import java.util.List;
 
 public class PingHistoryProvider extends ContentProvider {
     public final static int RESULT_SUCCESS = 1;
     public final static int RESULT_FAILURE = 0;
 
+    public final static String SELECTION_FILTERED = "filtered";
+
+    public final static String HISTORY = "history";
+
     public final static String FIELD_RESULT = "field_result";
     public final static String FIELD_DURATION = "field_duration";
     public final static String FIELD_DATE = "field_date";
 
-    public final static String SCHEME = "content://";
+    public final static String SCHEME = "content";
     public final static String AUTHORITIES = "com.itea.practice.fundamentals.ping";
 
     private PingStatsStorage storage;
@@ -45,6 +52,102 @@ public class PingHistoryProvider extends ContentProvider {
         );
     }
 
+    public Cursor getCursor(final String[] projection, final String selection, final int index) {
+        return new AbstractCursor() {
+            private final List<PingLog> data = storage.filter(
+                    new PingFilter() {
+                        @Override
+                        public boolean filter(PingLog current) {
+                            if (selection == null || selection.isEmpty()) {
+                                return true;
+                            } else if (selection.equals(SELECTION_FILTERED)) {
+                                Calendar limit = Calendar.getInstance();
+                                limit.add(Calendar.MONTH, -1);
+
+                                Calendar target = Calendar.getInstance();
+                                target.setTimeInMillis(current.getDate());
+
+                                return target.after(limit) && current.getResult();
+                            } else {
+                                throw new IllegalArgumentException("Invalid selection argument");
+                            }
+
+                        }
+                    }
+            );
+
+
+            @Override
+            public int getCount() {
+                return data.size();
+            }
+
+            @Override
+            public String[] getColumnNames() {
+                if (projection.length == 0) {
+                    return new String[]{FIELD_RESULT, FIELD_DURATION, FIELD_DATE};
+                } else {
+                    return projection;
+                }
+            }
+
+            @Override
+            public String getString(int column) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public short getShort(int column) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public int getInt(int column) {
+                String fieldName = getColumnNames()[column];
+
+                if (!fieldName.equals(FIELD_RESULT)) {
+                    throw new InvalidParameterException("Field " + fieldName + "is not represented as Int");
+                }
+
+                return data.get(this.getPosition()).getResult()
+                        ? RESULT_SUCCESS
+                        : RESULT_FAILURE;
+            }
+
+            @Override
+            public long getLong(int column) {
+                String fieldName = getColumnNames()[column];
+                PingLog row = data.get(column);
+
+                switch (fieldName) {
+                    case FIELD_DATE:
+                        return row.getDate();
+                    case FIELD_DURATION:
+                        return row.getDuration();
+                    default:
+                        throw new InvalidParameterException(
+                                "Field " + fieldName + "is not represented as Long"
+                        );
+                }
+            }
+
+            @Override
+            public float getFloat(int column) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public double getDouble(int column) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean isNull(int column) {
+                return false;
+            }
+        };
+    }
+
     @Override
     public boolean onCreate() {
         if (getContext() == null) return false;
@@ -61,64 +164,41 @@ public class PingHistoryProvider extends ContentProvider {
                         @Nullable String[] selectionArgs,
                         @Nullable String sortOrder) {
 
+        if (uri.getScheme() == null || uri.getPath() == null) {
+            throw new IllegalArgumentException("Wrong URI");
+        }
 
-        return new AbstractCursor() {
-            @Override
-            public int getCount() {
-                return storage.getLogs().size();
+        if (!uri.getScheme().equals(SCHEME)) {
+            throw new IllegalArgumentException("Wrong Schema");
+        }
+
+        if (!uri.getAuthority().equals(AUTHORITIES)) {
+            throw new IllegalArgumentException("Wrong authorities");
+        }
+
+        if (uri.getPath().contains(HISTORY)) {
+            List<String> pathSegments = uri.getPathSegments();
+
+            switch (pathSegments.size()) {
+                case 1:
+                    return getCursor(
+                            projection,
+                            selection,
+                            -1
+                    );
+                case 2:
+                    return getCursor(
+                            projection,
+                            selection,
+                            Integer.valueOf(pathSegments.get(pathSegments.size() - 1))
+                    );
+                default:
+                    throw new UnsupportedOperationException();
             }
 
-            @Override
-            public String[] getColumnNames() {
-                return new String[]{FIELD_RESULT, FIELD_DURATION, FIELD_DATE};
-            }
-
-            @Override
-            public String getString(int column) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public short getShort(int column) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public int getInt(int column) {
-                if (column == 0) {
-                    return storage.getLogs().get(this.getPosition()).getResult()
-                            ? RESULT_SUCCESS
-                            : RESULT_FAILURE;
-                }
-
-                throw new InvalidParameterException();
-            }
-
-            @Override
-            public long getLong(int column) {
-                PingLog row = storage.getLog(column);
-
-                if (column == 1) return row.getDuration();
-                if (column == 2) return row.getDate();
-
-                throw new InvalidParameterException();
-            }
-
-            @Override
-            public float getFloat(int column) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public double getDouble(int column) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean isNull(int column) {
-                return true;
-            }
-        };
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Nullable

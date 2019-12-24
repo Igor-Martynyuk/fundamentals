@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -26,6 +27,13 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     private final String KEY_STATE_STATUS = "state_status";
     private final String KEY_STATE_DELAY = "state_delay";
 
+    private final String PING_BASE_URI = new StringBuilder()
+            .append(PingHistoryProvider.SCHEME)
+            .append("://")
+            .append(PingHistoryProvider.AUTHORITIES)
+            .append("/")
+            .toString();
+
     private String currentConnectionType = null;
 
     private InternetReceiver receiver;
@@ -36,15 +44,39 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     private TextView outputStatus;
     private TextView outputDelay;
 
+    public void updateDelay() {
+        Uri uri = Uri.parse(PING_BASE_URI + "/" + PingHistoryProvider.HISTORY);
+
+        Cursor cursor = getContentResolver().query(
+                uri,
+                new String[]{PingHistoryProvider.FIELD_DURATION},
+                PingHistoryProvider.SELECTION_FILTERED,
+                null,
+                null
+        );
+        assert cursor != null;
+
+        long delay = 0;
+
+        cursor.moveToFirst();
+
+        do {
+            delay += cursor.getLong(0);
+            cursor.moveToNext();
+        } while (!cursor.isLast());
+
+        outputDelay.setText(String.valueOf(delay));
+    }
+
     private PingServiceBinder.PingListener pingListener = new PingServiceBinder.PingListener() {
         @Override
         public void onPing(final PingLog log) {
             getContentResolver().insert(
-                    Uri.parse(PingHistoryProvider.SCHEME + PingHistoryProvider.AUTHORITIES),
+                    Uri.parse(PING_BASE_URI),
                     PingHistoryProvider.logToValues(log)
             );
 
-            outputDelay.setText(String.valueOf(log.getDuration()));
+            updateDelay();
         }
     };
 
@@ -144,14 +176,6 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     @Override
     protected void onResume() {
         super.onResume();
-
-        getContentResolver().query(
-                Uri.parse(PingHistoryProvider.SCHEME + PingHistoryProvider.AUTHORITIES),
-                null,
-                null,
-                null,
-                null
-        );
 
         this.receiver = new InternetReceiver();
         IntentFilter filter = new IntentFilter();

@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -31,7 +31,8 @@ public class PingStatsStorage {
 
         return json.isEmpty()
                 ? new ArrayList<PingLog>()
-                : (List<PingLog>)this.gson.fromJson(json,new TypeToken<ArrayList<PingLog>>() {/*nothing*/}.getType()
+                : (List<PingLog>) this.gson.fromJson(json, new TypeToken<ArrayList<PingLog>>() {/*nothing*/
+                }.getType()
         );
     }
 
@@ -46,6 +47,18 @@ public class PingStatsStorage {
 
     public List<PingLog> getLogs() {
         return this.logs;
+    }
+
+    public List<PingLog> filter(PingFilter filter) {
+        List<PingLog> result = new ArrayList<>();
+
+        for (PingLog current : logs) {
+            if (filter.filter(current)) {
+                result.add(current);
+            }
+        }
+
+        return result;
     }
 
 }
