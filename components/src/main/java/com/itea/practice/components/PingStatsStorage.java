@@ -22,18 +22,17 @@ public class PingStatsStorage {
     public PingStatsStorage(Context context) {
         this.gson = new Gson();
         this.preferences = context.getSharedPreferences(this.PREFS_FILE_NAME, Context.MODE_PRIVATE);
-        this.logs = this.parseLogs(this.preferences.getString(this.PREFS_LOGS_KEY, null));
+        this.logs = this.parseLogs();
     }
 
-    private List<PingLog> parseLogs(String json) {
-        try {
-            return this.gson.fromJson(
-                    json,
-                    new TypeToken<ArrayList<PingLog>>() {/*nothing*/}.getType()
-            );
-        } catch (Exception ignored) {
-            return new ArrayList<>();
-        }
+    @SuppressWarnings("unchecked")
+    private List<PingLog> parseLogs() {
+        String json = this.preferences.getString(this.PREFS_LOGS_KEY, "");
+
+        return json.isEmpty()
+                ? new ArrayList<PingLog>()
+                : (List<PingLog>)this.gson.fromJson(json,new TypeToken<ArrayList<PingLog>>() {/*nothing*/}.getType()
+        );
     }
 
     public void insertLog(PingLog log) {
