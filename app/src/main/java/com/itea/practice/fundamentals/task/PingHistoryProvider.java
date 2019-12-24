@@ -30,7 +30,7 @@ public class PingHistoryProvider extends ContentProvider {
     public static ContentValues logToValues(PingLog log) {
         ContentValues result = new ContentValues();
 
-        result.put(FIELD_DURATION, log.getResult() ? RESULT_SUCCESS : RESULT_FAILURE);
+        result.put(FIELD_RESULT, log.getResult() ? RESULT_SUCCESS : RESULT_FAILURE);
         result.put(FIELD_DURATION, log.getDuration());
         result.put(FIELD_DATE, log.getDate());
 

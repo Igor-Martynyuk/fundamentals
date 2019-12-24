@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +27,10 @@ public class PingStatsStorage {
 
     private List<PingLog> parseLogs(String json) {
         try {
-            return Arrays.asList(this.gson.fromJson(json, PingLog[].class));
+            return this.gson.fromJson(
+                    json,
+                    new TypeToken<ArrayList<PingLog>>() {/*nothing*/}.getType()
+            );
         } catch (Exception ignored) {
             return new ArrayList<>();
         }

@@ -1,5 +1,8 @@
 package com.itea.practice.components;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -9,6 +12,7 @@ public class PingExecutor {
 
     private boolean isActive = false;
     private Thread worker;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     public void execute(CallBack callBack, String address) {
         if (isActive) return;
@@ -45,22 +49,30 @@ public class PingExecutor {
                     e.printStackTrace();
                 }
 
-                long started = System.currentTimeMillis();
+                final long started = System.currentTimeMillis();
 
                 try {
 
                     if (address == null) continue;
                     Process process = Runtime.getRuntime().exec("/system/bin/ping -c 1 " + address);
 
-                    int result = process.waitFor();
-                    long finished = System.currentTimeMillis();
+                    final int result = process.waitFor();
+                    final long finished = System.currentTimeMillis();
 
                     if (callBack.get() == null) continue;
-                    if (result == 0) {
-                        callBack.get().onSuccess(started, finished);
-                    } else {
-                        callBack.get().onFailure(started, finished);
-                    }
+
+                    handler.post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (result == 0) {
+                                        callBack.get().onSuccess(started, finished);
+                                    } else {
+                                        callBack.get().onFailure(started, finished);
+                                    }
+                                }
+                            }
+                    );
 
                 } catch (InterruptedException | IOException error) {
                     if (error instanceof InterruptedException) {
