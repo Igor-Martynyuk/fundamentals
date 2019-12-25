@@ -21,13 +21,13 @@ public class PingHistoryProvider extends ContentProvider {
     public final static int RESULT_SUCCESS = 1;
     public final static int RESULT_FAILURE = 0;
 
-    public final static Uri BASE_URI = Uri.parse(
+    public final static Uri HISTORY_URI = Uri.parse(
             PingHistoryProvider.SCHEME + "://" + PingHistoryProvider.AUTHORITIES + "/"
     );
 
     public final static String SELECTION_FILTERED = "filtered";
 
-    public final static String HISTORY = "history";
+    public final static String SEGMENT_HISTORY = "history";
 
     public final static String FIELD_RESULT = "field_result";
     public final static String FIELD_DURATION = "field_duration";
@@ -60,10 +60,14 @@ public class PingHistoryProvider extends ContentProvider {
         return new AbstractCursor() {
             private final List<PingLog> data = storage.filter(
                     new PingFilter() {
+                        private boolean checkIndex(PingLog current){
+                            return index < 0 || storage.getLogs().indexOf(current) == index;
+                        }
+
                         @Override
                         public boolean filter(PingLog current) {
                             if (selection == null || selection.isEmpty()) {
-                                return true;
+                                return checkIndex(current);
                             } else if (selection.equals(SELECTION_FILTERED)) {
                                 Calendar limit = Calendar.getInstance();
                                 limit.add(Calendar.MONTH, -1);
@@ -71,7 +75,7 @@ public class PingHistoryProvider extends ContentProvider {
                                 Calendar target = Calendar.getInstance();
                                 target.setTimeInMillis(current.getDate());
 
-                                return target.after(limit) && current.getResult();
+                                return target.after(limit) && current.getResult() && checkIndex(current);
                             } else {
                                 throw new IllegalArgumentException("Invalid selection argument");
                             }
@@ -168,7 +172,7 @@ public class PingHistoryProvider extends ContentProvider {
                         @Nullable String[] selectionArgs,
                         @Nullable String sortOrder) {
 
-        if (uri.getScheme() == null || uri.getPath() == null) {
+        if (uri.getScheme() == null || uri.getPath() == null || uri.getAuthority() == null) {
             throw new IllegalArgumentException("Wrong URI");
         }
 
@@ -180,7 +184,7 @@ public class PingHistoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Wrong authorities");
         }
 
-        if (uri.getPath().contains(HISTORY)) {
+        if (uri.getPath().contains(SEGMENT_HISTORY)) {
             List<String> pathSegments = uri.getPathSegments();
 
             switch (pathSegments.size()) {
@@ -215,8 +219,9 @@ public class PingHistoryProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri,
                       @Nullable ContentValues values) {
+        if (values == null) return null;
 
-        if (values != null) {
+        if (uri.getPathSegments().get(0).equals(SEGMENT_HISTORY)) {
             storage.insertLog(valuesToLog(values));
         }
 

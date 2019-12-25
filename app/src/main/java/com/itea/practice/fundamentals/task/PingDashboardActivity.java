@@ -41,7 +41,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
     @SuppressLint("SetTextI18n")
     public void updateDelay() {
-        Uri uri = Uri.parse(PingHistoryProvider.BASE_URI + PingHistoryProvider.HISTORY);
+        Uri uri = Uri.parse(PingHistoryProvider.HISTORY_URI + PingHistoryProvider.SEGMENT_HISTORY);
 
         Cursor cursor = getContentResolver().query(
                 uri,
@@ -86,7 +86,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         @Override
         public void onPing(final PingLog log) {
             getContentResolver().insert(
-                    PingHistoryProvider.BASE_URI,
+                    PingHistoryProvider.HISTORY_URI,
                     PingHistoryProvider.logToValues(log)
             );
 
