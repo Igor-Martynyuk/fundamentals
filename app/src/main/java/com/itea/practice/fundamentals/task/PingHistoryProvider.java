@@ -21,10 +21,6 @@ public class PingHistoryProvider extends ContentProvider {
     public final static int RESULT_SUCCESS = 1;
     public final static int RESULT_FAILURE = 0;
 
-    public final static Uri HISTORY_URI = Uri.parse(
-            PingHistoryProvider.SCHEME + "://" + PingHistoryProvider.AUTHORITIES + "/"
-    );
-
     public final static String SELECTION_FILTERED = "filtered";
 
     public final static String SEGMENT_HISTORY = "history";
@@ -35,6 +31,10 @@ public class PingHistoryProvider extends ContentProvider {
 
     public final static String SCHEME = "content";
     public final static String AUTHORITIES = "com.itea.practice.fundamentals.ping";
+
+    public final static Uri HISTORY_URI = Uri.parse(
+            PingHistoryProvider.SCHEME + "://" + PingHistoryProvider.AUTHORITIES + "/" + SEGMENT_HISTORY
+    );
 
     private PingStatsStorage storage;
 
@@ -60,7 +60,7 @@ public class PingHistoryProvider extends ContentProvider {
         return new AbstractCursor() {
             private final List<PingLog> data = storage.filter(
                     new PingFilter() {
-                        private boolean checkIndex(PingLog current){
+                        private boolean checkIndex(PingLog current) {
                             return index < 0 || storage.getLogs().indexOf(current) == index;
                         }
 

@@ -41,10 +41,9 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
     @SuppressLint("SetTextI18n")
     public void updateDelay() {
-        Uri uri = Uri.parse(PingHistoryProvider.HISTORY_URI + PingHistoryProvider.SEGMENT_HISTORY);
 
         Cursor cursor = getContentResolver().query(
-                uri,
+                PingHistoryProvider.HISTORY_URI,
                 new String[]{PingHistoryProvider.FIELD_DURATION},
                 PingHistoryProvider.SELECTION_FILTERED,
                 null,
