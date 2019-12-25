@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.itea.practice.components.PingCallBack;
 import com.itea.practice.components.PingExecutor;
 import com.itea.practice.components.PingLog;
 
@@ -13,7 +14,7 @@ public class PingService extends Service {
     private PingExecutor executor;
     private PingServiceBinder binder;
 
-    private PingExecutor.CallBack callBack = new PingExecutor.CallBack() {
+    private PingCallBack callBack = new PingCallBack() {
         @Override
         public void onSuccess(long started, long finished) {
             if (binder != null) {
@@ -55,7 +56,7 @@ public class PingService extends Service {
                 void startPingProcess() {
                     super.startPingProcess();
 
-                    executor.execute(callBack, "8.8.8.8");
+                    executor.execute(callBack);
                 }
 
                 @Override

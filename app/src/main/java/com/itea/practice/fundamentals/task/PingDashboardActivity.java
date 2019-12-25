@@ -1,5 +1,6 @@
 package com.itea.practice.fundamentals.task;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,28 +46,33 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
     private TextView outputStatus;
     private TextView outputDelay;
 
+    @SuppressLint("SetTextI18n")
     public void updateDelay() {
-        Uri uri = Uri.parse(PING_BASE_URI + "/" + PingHistoryProvider.HISTORY);
+        Uri uri = Uri.parse(PING_BASE_URI + PingHistoryProvider.HISTORY);
 
         Cursor cursor = getContentResolver().query(
                 uri,
                 new String[]{PingHistoryProvider.FIELD_DURATION},
-                PingHistoryProvider.SELECTION_FILTERED,
+                null,
                 null,
                 null
         );
-        assert cursor != null;
+        if (cursor == null || cursor.getCount() <= 0) return;
 
-        long delay = 0;
+        long delaySum = 0L;
+        long lastDelay = 0L;
 
         cursor.moveToFirst();
 
-        do {
-            delay += cursor.getLong(0);
+        while (!cursor.isAfterLast()){
+            long delay = cursor.getLong(0);
+            delaySum += delay;
             cursor.moveToNext();
-        } while (!cursor.isLast());
+        }
 
-        outputDelay.setText(String.valueOf(delay));
+        outputDelay.setText(lastDelay + "/" + (delaySum / cursor.getCount()) + " ms");
+
+        cursor.close();
     }
 
     private PingServiceBinder.PingListener pingListener = new PingServiceBinder.PingListener() {
