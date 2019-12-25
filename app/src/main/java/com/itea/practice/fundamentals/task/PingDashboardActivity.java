@@ -53,26 +53,40 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         Cursor cursor = getContentResolver().query(
                 uri,
                 new String[]{PingHistoryProvider.FIELD_DURATION},
-                null,
+                PingHistoryProvider.SELECTION_FILTERED,
                 null,
                 null
         );
-        if (cursor == null || cursor.getCount() <= 0) return;
 
         long delaySum = 0L;
+        long commonDelay = 0L;
         long lastDelay = 0L;
 
-        cursor.moveToFirst();
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()){
-            long delay = cursor.getLong(0);
-            delaySum += delay;
-            cursor.moveToNext();
+            while (!cursor.isAfterLast()) {
+                long delay = cursor.getLong(0);
+
+                delaySum += delay;
+                lastDelay = delay;
+
+                cursor.moveToNext();
+            }
+            commonDelay = delaySum / cursor.getCount();
+
+            cursor.close();
         }
 
-        outputDelay.setText(lastDelay + "/" + (delaySum / cursor.getCount()) + " ms");
-
-        cursor.close();
+        outputDelay.setText(
+                lastDelay
+                        + "ms "
+                        + getString(R.string.last).toLowerCase()
+                        + "\n"
+                        + commonDelay
+                        + "ms "
+                        + getString(R.string.common).toLowerCase()
+        );
     }
 
     private PingServiceBinder.PingListener pingListener = new PingServiceBinder.PingListener() {
@@ -205,6 +219,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
             }
         }
 
+        updateDelay();
     }
 
     @Override

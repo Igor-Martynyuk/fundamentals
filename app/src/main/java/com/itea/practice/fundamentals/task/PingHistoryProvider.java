@@ -117,7 +117,7 @@ public class PingHistoryProvider extends ContentProvider {
             @Override
             public long getLong(int column) {
                 String fieldName = getColumnNames()[column];
-                PingLog row = data.get(column);
+                PingLog row = data.get(getPosition());
 
                 switch (fieldName) {
                     case FIELD_DATE:
