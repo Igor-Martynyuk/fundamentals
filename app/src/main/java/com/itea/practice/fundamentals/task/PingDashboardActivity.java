@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,17 +23,11 @@ import androidx.core.content.ContextCompat;
 import com.itea.practice.components.PingLog;
 import com.itea.practice.fundamentals.R;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class PingDashboardActivity extends AppCompatActivity implements InternetReceiver.Listener, View.OnClickListener {
     private final String KEY_STATE_CONNECTION = "state_connection";
     private final String KEY_STATE_STATUS = "state_status";
     private final String KEY_STATE_DELAY = "state_delay";
-
-    private final String PING_BASE_URI = new StringBuilder()
-            .append(PingHistoryProvider.SCHEME)
-            .append("://")
-            .append(PingHistoryProvider.AUTHORITIES)
-            .append("/")
-            .toString();
 
     private String currentConnectionType = null;
 
@@ -48,7 +41,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
 
     @SuppressLint("SetTextI18n")
     public void updateDelay() {
-        Uri uri = Uri.parse(PING_BASE_URI + PingHistoryProvider.HISTORY);
+        Uri uri = Uri.parse(PingHistoryProvider.BASE_URI + PingHistoryProvider.HISTORY);
 
         Cursor cursor = getContentResolver().query(
                 uri,
@@ -93,7 +86,7 @@ public class PingDashboardActivity extends AppCompatActivity implements Internet
         @Override
         public void onPing(final PingLog log) {
             getContentResolver().insert(
-                    Uri.parse(PING_BASE_URI),
+                    PingHistoryProvider.BASE_URI,
                     PingHistoryProvider.logToValues(log)
             );
 
