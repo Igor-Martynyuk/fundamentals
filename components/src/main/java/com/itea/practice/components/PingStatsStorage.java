@@ -1,5 +1,6 @@
 package com.itea.practice.components;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -36,9 +37,10 @@ public class PingStatsStorage {
         );
     }
 
+    @SuppressLint("ApplySharedPref")
     public void insertLog(PingLog log) {
         this.logs.add(log);
-        this.preferences.edit().putString(this.PREFS_LOGS_KEY, this.gson.toJson(this.logs)).apply();
+        this.preferences.edit().putString(this.PREFS_LOGS_KEY, this.gson.toJson(this.logs)).commit();
     }
 
     public PingLog getLog(int index) {
