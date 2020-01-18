@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task;
+package com.itea.practice.fundamentals.task.components.ui;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,16 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.itea.practice.fundamentals.R;
+import com.itea.practice.fundamentals.task.components.data.PingHistoryProvider;
 
 public class PingAdapter extends RecyclerView.Adapter<PingItemHolder> {
     private Context context;
     private Cursor cursor;
 
-    public PingAdapter(Context context) {
+    PingAdapter(Context context) {
         this.context = context;
     }
 
-    public void setCursor(Cursor cursor) {
+    void setCursor(Cursor cursor) {
         this.cursor = cursor;
     }
 

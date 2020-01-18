@@ -4,6 +4,7 @@
     package="com.itea.practice.fundamentals">
 
     <application
+        android:name=".FundamentalsApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,17 +25,18 @@
         </activity>
 
         <activity android:name=".start.menu.MenuActivity" />
-        <activity android:name=".task.PingDashboardActivity" />
-        <activity android:name=".task.PingHistoryActivity" />
+        <activity android:name=".task.components.ui.PingDashboardActivity" />
+        <activity android:name=".task.components.ui.PingHistoryActivity" />
 
         <service
-            android:name=".task.PingService"
+            android:name=".task.components.data.PingService"
             android:enabled="true"
             android:exported="false" />
 
         <provider
-            android:name=".task.PingHistoryProvider"
+            android:name=".task.components.data.PingHistoryProvider"
             android:authorities="com.itea.practice.fundamentals.ping"
+            android:enabled="true"
             android:exported="false" />
 
     </application>

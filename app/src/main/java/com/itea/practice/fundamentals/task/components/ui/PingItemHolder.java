@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task;
+package com.itea.practice.fundamentals.task.components.ui;
 
 import android.view.View;
 import android.widget.TextView;

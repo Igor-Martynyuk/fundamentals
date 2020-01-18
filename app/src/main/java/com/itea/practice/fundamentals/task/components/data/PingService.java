@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task;
+package com.itea.practice.fundamentals.task.components.data;
 
 import android.app.Service;
 import android.content.Intent;
@@ -18,7 +18,14 @@ public class PingService extends Service {
         @Override
         public void onSuccess(long started, long finished) {
             if (binder != null) {
-                binder.onPing(new PingLog(true, finished - started, started));
+                PingLog log = new PingLog(true, finished - started, started);
+
+                getContentResolver().insert(
+                        PingHistoryProvider.HISTORY_URI,
+                        PingHistoryProvider.logToValues(log)
+                );
+
+                binder.onPing(log);
             }
         }
 
@@ -48,21 +55,17 @@ public class PingService extends Service {
         if (binder == null) {
             binder = new PingServiceBinder() {
                 @Override
-                boolean isActive() {
+                public boolean isActive() {
                     return executor.isActive();
                 }
 
                 @Override
-                void startPingProcess() {
-                    super.startPingProcess();
-
+                public void startPingProcess() {
                     executor.execute(callBack);
                 }
 
                 @Override
-                void stopPingProcess() {
-                    super.stopPingProcess();
-
+                public void stopPingProcess() {
                     executor.interrupt();
                 }
             };

@@ -15,12 +15,12 @@ public class PingExecutor {
     private Handler handler = new Handler();
 
     private void notify(final boolean result, final long started) {
-        if (callBack.get() == null) return;
-
         handler.post(
                 new Runnable() {
                     @Override
                     public void run() {
+                        if (callBack.get() == null) return;
+
                         if (result) {
                             callBack.get().onSuccess(started, System.currentTimeMillis());
                         } else {

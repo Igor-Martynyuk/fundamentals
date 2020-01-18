@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task;
+package com.itea.practice.fundamentals.task.components.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 
 import com.itea.practice.fundamentals.R;
+import com.itea.practice.fundamentals.task.components.data.PingHistoryProvider;
 
 public class PingHistoryActivity extends AppCompatActivity {
     private PingAdapter adapter;

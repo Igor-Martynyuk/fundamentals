@@ -1,10 +1,11 @@
-package com.itea.practice.fundamentals.task;
+package com.itea.practice.fundamentals.task.components.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -219,10 +220,21 @@ public class PingHistoryProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri,
                       @Nullable ContentValues values) {
-        if (values == null) return null;
 
-        if (uri.getPathSegments().get(0).equals(SEGMENT_HISTORY)) {
-            storage.insertLog(valuesToLog(values));
+        if (values != null && uri.getPathSegments().get(0).equals(SEGMENT_HISTORY)) {
+            PingLog log = valuesToLog(values);
+            storage.insertLog(log);
+
+            Log.d("temp_log", "inserted");
+
+            if (getContext() != null) {
+                getContext().getContentResolver().notifyChange(
+                        HISTORY_URI.buildUpon().appendPath(String.valueOf(storage.getLogs().indexOf(log))).build(),
+                        null
+                );
+            }
+
+            return null;
         }
 
         return null;
