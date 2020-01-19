@@ -1,16 +1,13 @@
-package com.itea.practice.fundamentals.task.components.util.builder;
+package com.itea.practice.fundamentals.task.components.data.provider;
 
 import android.net.Uri;
-
-import com.itea.practice.fundamentals.Const;
 
 public class PingHistoryUriBuilder {
 
     private static Uri.Builder getBuilder() {
         return new Uri.Builder()
-                .scheme(Const.SCHEME)
-                .authority(Const.AUTHORITY)
-                .appendPath(Const.SEGMENT_HISTORY);
+                .scheme(PingHistoryProvider.SCHEME)
+                .authority(PingHistoryProvider.AUTHORITY);
     }
 
     public static Uri build() {

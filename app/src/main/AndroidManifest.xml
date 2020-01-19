@@ -29,13 +29,13 @@
         <activity android:name=".task.components.ui.history.PingHistoryActivity" />
 
         <service
-            android:name=".task.components.data.PingService"
+            android:name=".task.components.data.service.PingService"
             android:enabled="true"
             android:exported="false" />
 
         <provider
-            android:name=".task.components.data.PingHistoryProvider"
-            android:authorities="com.itea.practice.fundamentals.ping"
+            android:name=".task.components.data.provider.PingHistoryProvider"
+            android:authorities="com.itea.practice.fundamentals.ping.history"
             android:enabled="true"
             android:exported="false" />
 

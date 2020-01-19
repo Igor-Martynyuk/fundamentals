@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.components.data;
+package com.itea.practice.fundamentals.task.components.data.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -9,8 +9,8 @@ import androidx.annotation.Nullable;
 import com.itea.practice.components.PingCallBack;
 import com.itea.practice.components.PingExecutor;
 import com.itea.practice.components.PingLog;
-import com.itea.practice.fundamentals.task.components.util.builder.PingHistoryUriBuilder;
-import com.itea.practice.fundamentals.task.components.util.mapper.LogToValuesMapper;
+import com.itea.practice.fundamentals.task.components.data.provider.PingHistoryUriBuilder;
+import com.itea.practice.fundamentals.task.components.data.provider.MapperLogToValues;
 
 public class PingService extends Service {
     private PingExecutor executor;
@@ -22,7 +22,7 @@ public class PingService extends Service {
             if (binder != null) {
                 PingLog log = new PingLog(true, finished - started, started);
 
-                getContentResolver().insert(PingHistoryUriBuilder.build(), LogToValuesMapper.map(log));
+                getContentResolver().insert(PingHistoryUriBuilder.build(), MapperLogToValues.map(log));
                 binder.onPing(log);
             }
         }

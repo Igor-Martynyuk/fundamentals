@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.components.data;
+package com.itea.practice.fundamentals.task.components.data.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

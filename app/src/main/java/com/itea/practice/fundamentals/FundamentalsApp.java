@@ -3,22 +3,22 @@ package com.itea.practice.fundamentals;
 import android.app.Application;
 import android.content.IntentFilter;
 
-import com.itea.practice.fundamentals.task.components.controller.PingHistoryController;
-import com.itea.practice.fundamentals.task.components.controller.PingStatusController;
-import com.itea.practice.fundamentals.task.components.data.InternetReceiver;
+import com.itea.practice.fundamentals.task.components.manager.history.PingHistoryManager;
+import com.itea.practice.fundamentals.task.components.manager.status.PingStatusManager;
+import com.itea.practice.fundamentals.task.components.data.receiver.InternetReceiver;
 
 public class FundamentalsApp extends Application {
     private InternetReceiver internetReceiver;
-    private PingStatusController stateController;
-    private PingHistoryController historyController;
+    private PingStatusManager pingStateManager;
+    private PingHistoryManager pingHistoryManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         this.internetReceiver = new InternetReceiver();
-        this.stateController = new PingStatusController(this, internetReceiver);
-        this.historyController = new PingHistoryController(this);
+        this.pingStateManager = new PingStatusManager(this, internetReceiver);
+        this.pingHistoryManager = new PingHistoryManager(this);
 
         registerInternetReceiver();
     }
@@ -34,12 +34,12 @@ public class FundamentalsApp extends Application {
         return internetReceiver;
     }
 
-    public PingStatusController getStateController() {
-        return stateController;
+    public PingStatusManager getPingStateManager() {
+        return pingStateManager;
     }
 
-    public PingHistoryController getHistoryController() {
-        return historyController;
+    public PingHistoryManager getPingHistoryManager() {
+        return pingHistoryManager;
     }
 
 }

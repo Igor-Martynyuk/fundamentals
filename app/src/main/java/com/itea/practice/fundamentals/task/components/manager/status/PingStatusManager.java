@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.components.controller;
+package com.itea.practice.fundamentals.task.components.manager.status;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -6,14 +6,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import com.itea.practice.fundamentals.task.components.data.InternetReceiver;
-import com.itea.practice.fundamentals.task.components.data.PingService;
-import com.itea.practice.fundamentals.task.components.data.PingServiceBinder;
+import com.itea.practice.fundamentals.task.components.data.receiver.InternetReceiver;
+import com.itea.practice.fundamentals.task.components.data.service.PingService;
+import com.itea.practice.fundamentals.task.components.data.service.PingServiceBinder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PingStatusController {
+public class PingStatusManager {
     private Context context;
     private InternetReceiver internetReceiver;
     private InternetListener internetListener;
@@ -23,7 +23,7 @@ public class PingStatusController {
     private List<Listener> statusListeners;
     private Status currentStatus;
 
-    public PingStatusController(Context context, InternetReceiver internetReceiver) {
+    public PingStatusManager(Context context, InternetReceiver internetReceiver) {
         this.context = context;
 
         this.internetReceiver = internetReceiver;

@@ -22,7 +22,7 @@ public class PingAdapter extends RecyclerView.Adapter<PingItemHolder> {
         this.logs = new ArrayList<>();
     }
 
-    void reset(List<PingLog> logs){
+    void reset(List<PingLog> logs) {
         this.logs.clear();
         this.logs.addAll(logs);
 
@@ -46,7 +46,7 @@ public class PingAdapter extends RecyclerView.Adapter<PingItemHolder> {
 
         holder.setDate(String.valueOf(current.getDate()));
         holder.setResult(current.getResult());
-        holder.setDuration(current.getDuration() + "ms");
+        holder.setDuration(context.getString(R.string.duration_units, current.getDuration()));
     }
 
     @Override

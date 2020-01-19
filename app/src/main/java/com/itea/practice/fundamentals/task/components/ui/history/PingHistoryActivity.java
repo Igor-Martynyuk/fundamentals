@@ -11,11 +11,11 @@ import android.widget.LinearLayout;
 import com.itea.practice.components.PingLog;
 import com.itea.practice.fundamentals.FundamentalsApp;
 import com.itea.practice.fundamentals.R;
-import com.itea.practice.fundamentals.task.components.controller.PingHistoryController;
-import com.itea.practice.fundamentals.task.components.ui.history.PingAdapter;
+import com.itea.practice.fundamentals.task.components.manager.history.LogReceivedListener;
+import com.itea.practice.fundamentals.task.components.manager.history.PingHistoryManager;
 
-public class PingHistoryActivity extends AppCompatActivity implements PingHistoryController.LogReceivedListener {
-    private PingHistoryController controller;
+public class PingHistoryActivity extends AppCompatActivity implements LogReceivedListener {
+    private PingHistoryManager pingHistoryManager;
     private PingAdapter adapter;
 
     @Override
@@ -23,7 +23,7 @@ public class PingHistoryActivity extends AppCompatActivity implements PingHistor
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ping_history);
 
-        controller = ((FundamentalsApp) getApplication()).getHistoryController();
+        pingHistoryManager = ((FundamentalsApp) getApplication()).getPingHistoryManager();
         adapter = new PingAdapter(this);
 
         RecyclerView list = findViewById(R.id.output_list);
@@ -36,19 +36,19 @@ public class PingHistoryActivity extends AppCompatActivity implements PingHistor
     protected void onResume() {
         super.onResume();
 
-        adapter.reset(controller.getLogs());
-        controller.addLogReceivedListener(this, false);
+        adapter.reset(pingHistoryManager.getLogs());
+        pingHistoryManager.addLogReceivedListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        controller.removeLogReceivedListener(this);
+        pingHistoryManager.removeLogReceivedListener(this);
     }
 
     @Override
-    public void onLogReceived(PingLog value) {
+    public void onPingReceived(PingLog value) {
         adapter.insert(value);
     }
 

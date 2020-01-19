@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.components.data;
+package com.itea.practice.fundamentals.task.components.data.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -12,15 +12,24 @@ import androidx.annotation.Nullable;
 import com.itea.practice.components.PingFilter;
 import com.itea.practice.components.PingLog;
 import com.itea.practice.components.PingStatsStorage;
-import com.itea.practice.fundamentals.Const;
-import com.itea.practice.fundamentals.task.components.util.builder.PingHistoryUriBuilder;
-import com.itea.practice.fundamentals.task.components.util.mapper.ValuesToLogMapper;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.List;
 
 public class PingHistoryProvider extends ContentProvider {
+    public final static int SUCCESS = 1;
+    public final static int FAILURE = 0;
+
+    public final static String RESULT = "field_result";
+    public final static String DURATION = "field_duration";
+    public final static String DATE = "field_date";
+
+    public final static String SCHEME = "content";
+    public final static String AUTHORITY = "com.itea.practice.fundamentals.ping.history";
+
+    public final static String FILTER_SUCCESS_ONLY = "filter_success";
+
     private PingStatsStorage storage;
 
     public Cursor getCursor(final String[] projection, final String selection, final int index) {
@@ -35,7 +44,7 @@ public class PingHistoryProvider extends ContentProvider {
                         public boolean filter(PingLog current) {
                             if (selection == null || selection.isEmpty()) {
                                 return checkIndex(current);
-                            } else if (selection.equals(Const.SELECTION_FILTERED)) {
+                            } else if (selection.equals(FILTER_SUCCESS_ONLY)) {
                                 Calendar limit = Calendar.getInstance();
                                 limit.add(Calendar.MONTH, -1);
 
@@ -60,7 +69,7 @@ public class PingHistoryProvider extends ContentProvider {
             @Override
             public String[] getColumnNames() {
                 if (projection == null || projection.length == 0) {
-                    return new String[]{Const.FIELD_RESULT, Const.FIELD_DURATION, Const.FIELD_DATE};
+                    return new String[]{RESULT, DURATION, DATE};
                 } else {
                     return projection;
                 }
@@ -80,13 +89,13 @@ public class PingHistoryProvider extends ContentProvider {
             public int getInt(int column) {
                 String fieldName = getColumnNames()[column];
 
-                if (!fieldName.equals(Const.FIELD_RESULT)) {
+                if (!fieldName.equals(RESULT)) {
                     throw new InvalidParameterException("Field " + fieldName + "is not represented as Int");
                 }
 
                 return data.get(this.getPosition()).getResult()
-                        ? Const.RESULT_SUCCESS
-                        : Const.RESULT_FAILURE;
+                        ? SUCCESS
+                        : FAILURE;
             }
 
             @Override
@@ -95,9 +104,9 @@ public class PingHistoryProvider extends ContentProvider {
                 PingLog row = data.get(getPosition());
 
                 switch (fieldName) {
-                    case Const.FIELD_DATE:
+                    case DATE:
                         return row.getDate();
-                    case Const.FIELD_DURATION:
+                    case DURATION:
                         return row.getDuration();
                     default:
                         throw new InvalidParameterException(
@@ -143,36 +152,31 @@ public class PingHistoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Wrong URI");
         }
 
-        if (!uri.getScheme().equals(Const.SCHEME)) {
+        if (!uri.getScheme().equals(SCHEME)) {
             throw new IllegalArgumentException("Wrong Schema");
         }
 
-        if (!uri.getAuthority().equals(Const.AUTHORITY)) {
+        if (!uri.getAuthority().equals(AUTHORITY)) {
             throw new IllegalArgumentException("Wrong authorities");
         }
 
-        if (uri.getPath().contains(Const.SEGMENT_HISTORY)) {
-            List<String> pathSegments = uri.getPathSegments();
+        List<String> pathSegments = uri.getPathSegments();
 
-            switch (pathSegments.size()) {
-                case 1:
-                    return getCursor(
-                            projection,
-                            selection,
-                            -1
-                    );
-                case 2:
-                    return getCursor(
-                            projection,
-                            selection,
-                            Integer.valueOf(pathSegments.get(pathSegments.size() - 1))
-                    );
-                default:
-                    throw new UnsupportedOperationException();
-            }
-
-        } else {
-            throw new UnsupportedOperationException();
+        switch (pathSegments.size()) {
+            case 0:
+                return getCursor(
+                        projection,
+                        selection,
+                        -1
+                );
+            case 1:
+                return getCursor(
+                        projection,
+                        selection,
+                        Integer.valueOf(pathSegments.get(pathSegments.size() - 1))
+                );
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -187,8 +191,8 @@ public class PingHistoryProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri,
                       @Nullable ContentValues values) {
 
-        if (values != null && uri.getPathSegments().get(0).equals(Const.SEGMENT_HISTORY)) {
-            PingLog log = ValuesToLogMapper.map(values);
+        if (values != null && AUTHORITY.equals(uri.getAuthority())) {
+            PingLog log = MapperValuesToLog.map(values);
             storage.insertLog(log);
 
             if (getContext() != null) {
