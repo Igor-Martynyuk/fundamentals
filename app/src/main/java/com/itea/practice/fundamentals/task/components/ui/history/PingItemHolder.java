@@ -10,14 +10,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.itea.practice.fundamentals.R;
 
 class PingItemHolder extends RecyclerView.ViewHolder {
+    private TextView outputIndex;
     private TextView outputDate;
     private TextView outputDuration;
 
     PingItemHolder(@NonNull View itemView) {
         super(itemView);
 
+        outputIndex = itemView.findViewById(R.id.output_index);
         outputDate = itemView.findViewById(R.id.output_date);
         outputDuration = itemView.findViewById(R.id.output_duration);
+    }
+
+    void setIndex(String value) {
+        outputIndex.setText(value);
     }
 
     void setResult(boolean result) {

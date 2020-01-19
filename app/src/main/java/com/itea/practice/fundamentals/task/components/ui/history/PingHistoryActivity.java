@@ -15,6 +15,8 @@ import com.itea.practice.fundamentals.task.components.manager.history.LogReceive
 import com.itea.practice.fundamentals.task.components.manager.history.PingHistoryManager;
 
 public class PingHistoryActivity extends AppCompatActivity implements LogReceivedListener {
+    private RecyclerView list;
+    private LinearLayoutManager layoutManager;
     private PingHistoryManager pingHistoryManager;
     private PingAdapter adapter;
 
@@ -24,10 +26,11 @@ public class PingHistoryActivity extends AppCompatActivity implements LogReceive
         setContentView(R.layout.activity_ping_history);
 
         pingHistoryManager = ((FundamentalsApp) getApplication()).getPingHistoryManager();
+        layoutManager = new LinearLayoutManager(this);
         adapter = new PingAdapter(this);
 
-        RecyclerView list = findViewById(R.id.output_list);
-        list.setLayoutManager(new LinearLayoutManager(this));
+        list = findViewById(R.id.output_list);
+        list.setLayoutManager(layoutManager);
         list.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
         list.setAdapter(adapter);
     }

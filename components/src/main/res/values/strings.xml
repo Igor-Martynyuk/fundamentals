@@ -13,5 +13,6 @@
     <string name="last">Last:</string>
     <string name="history">History</string>
     <string name="duration_units">%d ms</string>
+    <string name="index">%d.</string>
 
 </resources>

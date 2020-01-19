@@ -134,11 +134,8 @@ public class PingHistoryManager {
     }
 
     public List<PingLog> getLogs() {
-        try {
-            return requestAll(null, projection);
-        } catch (NullPointerException ignored) {
-            return new ArrayList<>();
-        }
+        List<PingLog> result = requestAll(null, projection);
+        return result == null ? new ArrayList<PingLog>() : result;
     }
 
     public void addLogReceivedListener(LogReceivedListener listener) {
