@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,49 +12,16 @@ import androidx.annotation.Nullable;
 import com.itea.practice.components.PingFilter;
 import com.itea.practice.components.PingLog;
 import com.itea.practice.components.PingStatsStorage;
+import com.itea.practice.fundamentals.Const;
+import com.itea.practice.fundamentals.task.components.util.builder.PingHistoryUriBuilder;
+import com.itea.practice.fundamentals.task.components.util.mapper.ValuesToLogMapper;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.List;
 
 public class PingHistoryProvider extends ContentProvider {
-    public final static int RESULT_SUCCESS = 1;
-    public final static int RESULT_FAILURE = 0;
-
-    public final static String SELECTION_FILTERED = "filtered";
-
-    public final static String SEGMENT_HISTORY = "history";
-
-    public final static String FIELD_RESULT = "field_result";
-    public final static String FIELD_DURATION = "field_duration";
-    public final static String FIELD_DATE = "field_date";
-
-    public final static String SCHEME = "content";
-    public final static String AUTHORITIES = "com.itea.practice.fundamentals.ping";
-
-    public final static Uri HISTORY_URI = Uri.parse(
-            PingHistoryProvider.SCHEME + "://" + PingHistoryProvider.AUTHORITIES + "/" + SEGMENT_HISTORY
-    );
-
     private PingStatsStorage storage;
-
-    public static ContentValues logToValues(PingLog log) {
-        ContentValues result = new ContentValues();
-
-        result.put(FIELD_RESULT, log.getResult() ? RESULT_SUCCESS : RESULT_FAILURE);
-        result.put(FIELD_DURATION, log.getDuration());
-        result.put(FIELD_DATE, log.getDate());
-
-        return result;
-    }
-
-    public static PingLog valuesToLog(ContentValues values) {
-        return new PingLog(
-                values.getAsInteger(FIELD_RESULT) == RESULT_SUCCESS,
-                values.getAsLong(FIELD_DURATION),
-                values.getAsLong(FIELD_DATE)
-        );
-    }
 
     public Cursor getCursor(final String[] projection, final String selection, final int index) {
         return new AbstractCursor() {
@@ -69,7 +35,7 @@ public class PingHistoryProvider extends ContentProvider {
                         public boolean filter(PingLog current) {
                             if (selection == null || selection.isEmpty()) {
                                 return checkIndex(current);
-                            } else if (selection.equals(SELECTION_FILTERED)) {
+                            } else if (selection.equals(Const.SELECTION_FILTERED)) {
                                 Calendar limit = Calendar.getInstance();
                                 limit.add(Calendar.MONTH, -1);
 
@@ -94,7 +60,7 @@ public class PingHistoryProvider extends ContentProvider {
             @Override
             public String[] getColumnNames() {
                 if (projection == null || projection.length == 0) {
-                    return new String[]{FIELD_RESULT, FIELD_DURATION, FIELD_DATE};
+                    return new String[]{Const.FIELD_RESULT, Const.FIELD_DURATION, Const.FIELD_DATE};
                 } else {
                     return projection;
                 }
@@ -114,13 +80,13 @@ public class PingHistoryProvider extends ContentProvider {
             public int getInt(int column) {
                 String fieldName = getColumnNames()[column];
 
-                if (!fieldName.equals(FIELD_RESULT)) {
+                if (!fieldName.equals(Const.FIELD_RESULT)) {
                     throw new InvalidParameterException("Field " + fieldName + "is not represented as Int");
                 }
 
                 return data.get(this.getPosition()).getResult()
-                        ? RESULT_SUCCESS
-                        : RESULT_FAILURE;
+                        ? Const.RESULT_SUCCESS
+                        : Const.RESULT_FAILURE;
             }
 
             @Override
@@ -129,9 +95,9 @@ public class PingHistoryProvider extends ContentProvider {
                 PingLog row = data.get(getPosition());
 
                 switch (fieldName) {
-                    case FIELD_DATE:
+                    case Const.FIELD_DATE:
                         return row.getDate();
-                    case FIELD_DURATION:
+                    case Const.FIELD_DURATION:
                         return row.getDuration();
                     default:
                         throw new InvalidParameterException(
@@ -177,15 +143,15 @@ public class PingHistoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Wrong URI");
         }
 
-        if (!uri.getScheme().equals(SCHEME)) {
+        if (!uri.getScheme().equals(Const.SCHEME)) {
             throw new IllegalArgumentException("Wrong Schema");
         }
 
-        if (!uri.getAuthority().equals(AUTHORITIES)) {
+        if (!uri.getAuthority().equals(Const.AUTHORITY)) {
             throw new IllegalArgumentException("Wrong authorities");
         }
 
-        if (uri.getPath().contains(SEGMENT_HISTORY)) {
+        if (uri.getPath().contains(Const.SEGMENT_HISTORY)) {
             List<String> pathSegments = uri.getPathSegments();
 
             switch (pathSegments.size()) {
@@ -221,18 +187,16 @@ public class PingHistoryProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri,
                       @Nullable ContentValues values) {
 
-        if (values != null && uri.getPathSegments().get(0).equals(SEGMENT_HISTORY)) {
-            PingLog log = valuesToLog(values);
+        if (values != null && uri.getPathSegments().get(0).equals(Const.SEGMENT_HISTORY)) {
+            PingLog log = ValuesToLogMapper.map(values);
             storage.insertLog(log);
 
             if (getContext() != null) {
                 getContext().getContentResolver().notifyChange(
-                        HISTORY_URI.buildUpon().appendPath(String.valueOf(storage.getLogs().indexOf(log))).build(),
+                        PingHistoryUriBuilder.build(storage.getLogs().indexOf(log)),
                         null
                 );
             }
-
-            return null;
         }
 
         return null;

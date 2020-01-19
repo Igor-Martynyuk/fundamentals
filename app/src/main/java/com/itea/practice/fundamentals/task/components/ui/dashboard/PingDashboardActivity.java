@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.components.ui;
+package com.itea.practice.fundamentals.task.components.ui.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,16 +15,17 @@ import com.itea.practice.fundamentals.FundamentalsApp;
 import com.itea.practice.fundamentals.R;
 import com.itea.practice.fundamentals.task.components.controller.PingHistoryController;
 import com.itea.practice.fundamentals.task.components.controller.PingStatusController;
-import com.itea.practice.fundamentals.task.components.data.PingInternetReceiver;
+import com.itea.practice.fundamentals.task.components.data.InternetReceiver;
+import com.itea.practice.fundamentals.task.components.ui.history.PingHistoryActivity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class PingDashboardActivity extends AppCompatActivity implements View.OnClickListener,
         PingStatusController.Listener,
-        PingInternetReceiver.Listener,
+        InternetReceiver.Listener,
         PingHistoryController.CommonDelayListener,
         PingHistoryController.LogReceivedListener {
 
-    private PingInternetReceiver internetReceiver;
+    private InternetReceiver internetReceiver;
     private PingStatusController statusController;
     private PingHistoryController historyController;
     private PingStatusController.Status pingStatus;
@@ -72,7 +73,7 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
         statusController.addStatusListener(this);
         internetReceiver.addListener(this);
         historyController.addCommonDelayListener(this);
-        historyController.addLogReceivedListener(this);
+        historyController.addLogReceivedListener(this, true);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onInternetChanged(PingInternetReceiver.Type type) {
+    public void onInternetChanged(InternetReceiver.Type type) {
         switch (type) {
             case NONE:
                 outputConnection.setText(R.string.connection_none);

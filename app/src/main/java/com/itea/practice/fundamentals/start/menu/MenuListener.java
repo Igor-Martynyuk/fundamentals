@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.itea.practice.fundamentals.task.components.ui.PingDashboardActivity;
+import com.itea.practice.fundamentals.task.components.ui.dashboard.PingDashboardActivity;
 
 public final class MenuListener implements View.OnClickListener {
 

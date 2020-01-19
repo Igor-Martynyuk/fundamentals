@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import com.itea.practice.components.PingCallBack;
 import com.itea.practice.components.PingExecutor;
 import com.itea.practice.components.PingLog;
+import com.itea.practice.fundamentals.task.components.util.builder.PingHistoryUriBuilder;
+import com.itea.practice.fundamentals.task.components.util.mapper.LogToValuesMapper;
 
 public class PingService extends Service {
     private PingExecutor executor;
@@ -20,11 +22,7 @@ public class PingService extends Service {
             if (binder != null) {
                 PingLog log = new PingLog(true, finished - started, started);
 
-                getContentResolver().insert(
-                        PingHistoryProvider.HISTORY_URI,
-                        PingHistoryProvider.logToValues(log)
-                );
-
+                getContentResolver().insert(PingHistoryUriBuilder.build(), LogToValuesMapper.map(log));
                 binder.onPing(log);
             }
         }

@@ -25,8 +25,8 @@
         </activity>
 
         <activity android:name=".start.menu.MenuActivity" />
-        <activity android:name=".task.components.ui.PingDashboardActivity" />
-        <activity android:name=".task.components.ui.PingHistoryActivity" />
+        <activity android:name=".task.components.ui.dashboard.PingDashboardActivity" />
+        <activity android:name=".task.components.ui.history.PingHistoryActivity" />
 
         <service
             android:name=".task.components.data.PingService"

@@ -5,10 +5,10 @@ import android.content.IntentFilter;
 
 import com.itea.practice.fundamentals.task.components.controller.PingHistoryController;
 import com.itea.practice.fundamentals.task.components.controller.PingStatusController;
-import com.itea.practice.fundamentals.task.components.data.PingInternetReceiver;
+import com.itea.practice.fundamentals.task.components.data.InternetReceiver;
 
 public class FundamentalsApp extends Application {
-    private PingInternetReceiver internetReceiver;
+    private InternetReceiver internetReceiver;
     private PingStatusController stateController;
     private PingHistoryController historyController;
 
@@ -16,7 +16,7 @@ public class FundamentalsApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        this.internetReceiver = new PingInternetReceiver();
+        this.internetReceiver = new InternetReceiver();
         this.stateController = new PingStatusController(this, internetReceiver);
         this.historyController = new PingHistoryController(this);
 
@@ -30,7 +30,7 @@ public class FundamentalsApp extends Application {
         registerReceiver(internetReceiver, filter);
     }
 
-    public PingInternetReceiver getInternetReceiver() {
+    public InternetReceiver getInternetReceiver() {
         return internetReceiver;
     }
 

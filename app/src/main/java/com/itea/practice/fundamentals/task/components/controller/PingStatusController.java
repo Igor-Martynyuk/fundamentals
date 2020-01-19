@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import com.itea.practice.fundamentals.task.components.data.PingInternetReceiver;
+import com.itea.practice.fundamentals.task.components.data.InternetReceiver;
 import com.itea.practice.fundamentals.task.components.data.PingService;
 import com.itea.practice.fundamentals.task.components.data.PingServiceBinder;
 
@@ -15,20 +15,20 @@ import java.util.List;
 
 public class PingStatusController {
     private Context context;
-    private PingInternetReceiver internetReceiver;
+    private InternetReceiver internetReceiver;
     private InternetListener internetListener;
-    private PingInternetReceiver.Type currentConnectionType;
+    private InternetReceiver.Type currentConnectionType;
     private PingServiceBinder serviceBinder;
     private PingServiceConnection serviceConnection;
     private List<Listener> statusListeners;
     private Status currentStatus;
 
-    public PingStatusController(Context context, PingInternetReceiver internetReceiver) {
+    public PingStatusController(Context context, InternetReceiver internetReceiver) {
         this.context = context;
 
         this.internetReceiver = internetReceiver;
         this.internetListener = new InternetListener();
-        this.currentConnectionType = PingInternetReceiver.Type.NONE;
+        this.currentConnectionType = InternetReceiver.Type.NONE;
 
         this.serviceConnection = new PingServiceConnection();
         this.statusListeners = new ArrayList<>();
@@ -47,7 +47,7 @@ public class PingStatusController {
         serviceBinder = null;
 
         internetReceiver.removeListener(internetListener);
-        currentConnectionType = PingInternetReceiver.Type.NONE;
+        currentConnectionType = InternetReceiver.Type.NONE;
 
         updateStatus(Status.NONE);
     }
@@ -88,15 +88,15 @@ public class PingStatusController {
         }
     }
 
-    private class InternetListener implements PingInternetReceiver.Listener {
+    private class InternetListener implements InternetReceiver.Listener {
         @Override
-        public void onInternetChanged(PingInternetReceiver.Type type) {
-            if (currentConnectionType == PingInternetReceiver.Type.NONE && type != PingInternetReceiver.Type.NONE) {
+        public void onInternetChanged(InternetReceiver.Type type) {
+            if (currentConnectionType == InternetReceiver.Type.NONE && type != InternetReceiver.Type.NONE) {
                 serviceBinder.startPingProcess();
                 updateStatus(Status.ACTIVE);
             }
 
-            if (currentConnectionType != PingInternetReceiver.Type.NONE && type == PingInternetReceiver.Type.NONE) {
+            if (currentConnectionType != InternetReceiver.Type.NONE && type == InternetReceiver.Type.NONE) {
                 serviceBinder.stopPingProcess();
                 updateStatus(Status.STARTED);
             }

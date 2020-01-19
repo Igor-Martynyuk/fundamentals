@@ -6,12 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.itea.practice.components.PingLog;
-import com.itea.practice.fundamentals.task.components.data.PingHistoryProvider;
+import com.itea.practice.fundamentals.Const;
+import com.itea.practice.fundamentals.task.components.util.builder.PingHistoryUriBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +29,49 @@ public class PingHistoryController {
         this.logReceivedListeners = new ArrayList<>();
 
         context.getContentResolver().registerContentObserver(
-                PingHistoryProvider.HISTORY_URI,
+                PingHistoryUriBuilder.build(),
                 true,
                 new HistoryObserver()
         );
     }
 
+    public List<PingLog> getLogs() {
+        Cursor cursor = context.getContentResolver().query(
+                PingHistoryUriBuilder.build(),
+                null,
+                Const.SELECTION_FILTERED,
+                null,
+                null
+        );
+
+        List<PingLog> result = new ArrayList<>();
+
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                result.add(
+                        new PingLog(
+                                cursor.getInt(0) == Const.RESULT_SUCCESS,
+                                cursor.getLong(1),
+                                cursor.getLong(2)
+                        )
+                );
+
+                cursor.moveToNext();
+            }
+
+            cursor.close();
+        }
+
+        return result;
+    }
+
     private long getDelay() {
         Cursor cursor = context.getContentResolver().query(
-                PingHistoryProvider.HISTORY_URI,
-                new String[]{PingHistoryProvider.FIELD_DURATION},
-                PingHistoryProvider.SELECTION_FILTERED,
+                PingHistoryUriBuilder.build(),
+                new String[]{Const.FIELD_DURATION},
+                Const.SELECTION_FILTERED,
                 null,
                 null
         );
@@ -68,9 +100,9 @@ public class PingHistoryController {
     @Nullable
     private PingLog getLastLog() {
         Cursor cursor = context.getContentResolver().query(
-                PingHistoryProvider.HISTORY_URI,
+                PingHistoryUriBuilder.build(),
                 null,
-                PingHistoryProvider.SELECTION_FILTERED,
+                Const.SELECTION_FILTERED,
                 null,
                 null
         );
@@ -80,10 +112,11 @@ public class PingHistoryController {
         cursor.moveToLast();
 
         PingLog result = new PingLog(
-                cursor.getInt(0) == PingHistoryProvider.RESULT_SUCCESS,
+                cursor.getInt(0) == Const.RESULT_SUCCESS,
                 cursor.getLong(1),
                 cursor.getLong(2)
         );
+
         cursor.close();
         return result;
     }
@@ -98,10 +131,12 @@ public class PingHistoryController {
         delayListeners.remove(listener);
     }
 
-    public void addLogReceivedListener(LogReceivedListener listener) {
+    public void addLogReceivedListener(LogReceivedListener listener, boolean notifyLast) {
         logReceivedListeners.add(listener);
 
+        if (!notifyLast) return;
         PingLog log = getLastLog();
+
         if (log == null) return;
         listener.onLogReceived(log);
     }

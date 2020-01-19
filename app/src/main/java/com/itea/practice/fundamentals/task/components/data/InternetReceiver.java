@@ -9,7 +9,7 @@ import com.itea.practice.components.InternetResolver;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PingInternetReceiver extends BroadcastReceiver {
+public class InternetReceiver extends BroadcastReceiver {
     private volatile List<Listener> listeners = new ArrayList<>();
     private Type lastType = Type.NONE;
 
