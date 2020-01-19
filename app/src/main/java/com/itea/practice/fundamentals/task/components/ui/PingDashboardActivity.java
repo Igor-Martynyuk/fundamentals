@@ -10,25 +10,31 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.itea.practice.components.PingLog;
 import com.itea.practice.fundamentals.FundamentalsApp;
 import com.itea.practice.fundamentals.R;
+import com.itea.practice.fundamentals.task.components.controller.PingHistoryController;
 import com.itea.practice.fundamentals.task.components.controller.PingStatusController;
 import com.itea.practice.fundamentals.task.components.data.PingInternetReceiver;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class PingDashboardActivity extends AppCompatActivity implements View.OnClickListener,
-        PingStatusController.Listener, PingInternetReceiver.Listener {
+        PingStatusController.Listener,
+        PingInternetReceiver.Listener,
+        PingHistoryController.CommonDelayListener,
+        PingHistoryController.LogReceivedListener {
 
     private PingInternetReceiver internetReceiver;
     private PingStatusController statusController;
+    private PingHistoryController historyController;
     private PingStatusController.Status pingStatus;
 
     private ImageView btnTumbler;
     private View btnHistory;
     private TextView outputConnection;
     private TextView outputStatus;
-    private TextView outputDelay;
-
+    private TextView outputDelayCommon;
+    private TextView outputDelayLast;
 
     private FundamentalsApp getApp() {
         return ((FundamentalsApp) getApplication());
@@ -44,11 +50,13 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_ping_dashboard);
 
         this.statusController = getApp().getStateController();
+        this.historyController = getApp().getHistoryController();
         this.internetReceiver = getApp().getInternetReceiver();
 
         this.outputConnection = findViewById(R.id.output_connection);
         this.outputStatus = findViewById(R.id.output_status);
-        this.outputDelay = findViewById(R.id.output_delay);
+        this.outputDelayCommon = findViewById(R.id.output_delay_common);
+        this.outputDelayLast = findViewById(R.id.output_delay_last);
 
         this.btnTumbler = findViewById(R.id.btn_tumbler);
         this.btnTumbler.setOnClickListener(this);
@@ -63,6 +71,8 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
 
         statusController.addStatusListener(this);
         internetReceiver.addListener(this);
+        historyController.addCommonDelayListener(this);
+        historyController.addLogReceivedListener(this);
     }
 
     @Override
@@ -70,6 +80,9 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
         super.onPause();
 
         statusController.removeStatusListener(this);
+        internetReceiver.removeListener(this);
+        historyController.removeCommonDelayListener(this);
+        historyController.removeLogReceivedListener(this);
     }
 
     @Override
@@ -123,4 +136,13 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    @Override
+    public void onCommonDelayChanged(long value) {
+        outputDelayCommon.setText(String.valueOf(value));
+    }
+
+    @Override
+    public void onLogReceived(PingLog value) {
+        outputDelayLast.setText(String.valueOf(value.getDuration()));
+    }
 }

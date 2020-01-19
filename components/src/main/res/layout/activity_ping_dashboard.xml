@@ -56,17 +56,27 @@
         app:layout_constraintTop_toBottomOf="@id/output_connection" />
 
     <TextView
-        android:id="@+id/label_delay"
+        android:id="@+id/label_delay_common"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_default"
-        android:text="@string/delay"
+        android:text="@string/common"
         app:layout_constraintEnd_toStartOf="@id/axis_y"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label_status" />
 
     <TextView
-        android:id="@+id/output_delay"
+        android:id="@+id/label_delay_last"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_default"
+        android:text="@string/last"
+        app:layout_constraintEnd_toStartOf="@id/axis_y"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_delay_common" />
+
+    <TextView
+        android:id="@+id/output_delay_common"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_default"
@@ -75,6 +85,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/axis_y"
         app:layout_constraintTop_toBottomOf="@id/output_status"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/output_delay_last"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_default"
+        android:layout_marginTop="@dimen/spacing_default"
+        android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/axis_y"
+        app:layout_constraintTop_toBottomOf="@id/output_delay_common"
         tools:ignore="HardcodedText" />
 
     <ImageView
@@ -87,7 +109,7 @@
         app:layout_constraintBottom_toTopOf="@id/btn_history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_delay" />
+        app:layout_constraintTop_toBottomOf="@id/label_delay_common" />
 
     <Button
         android:id="@+id/btn_history"

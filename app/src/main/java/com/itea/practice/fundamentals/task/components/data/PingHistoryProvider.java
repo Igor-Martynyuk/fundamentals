@@ -93,7 +93,7 @@ public class PingHistoryProvider extends ContentProvider {
 
             @Override
             public String[] getColumnNames() {
-                if (projection.length == 0) {
+                if (projection == null || projection.length == 0) {
                     return new String[]{FIELD_RESULT, FIELD_DURATION, FIELD_DATE};
                 } else {
                     return projection;
@@ -224,8 +224,6 @@ public class PingHistoryProvider extends ContentProvider {
         if (values != null && uri.getPathSegments().get(0).equals(SEGMENT_HISTORY)) {
             PingLog log = valuesToLog(values);
             storage.insertLog(log);
-
-            Log.d("temp_log", "inserted");
 
             if (getContext() != null) {
                 getContext().getContentResolver().notifyChange(
