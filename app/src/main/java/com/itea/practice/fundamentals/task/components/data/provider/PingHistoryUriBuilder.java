@@ -14,7 +14,7 @@ public class PingHistoryUriBuilder {
         return getBuilder().build();
     }
 
-    public static Uri build(int index) {
+    static Uri build(int index) {
         return getBuilder().appendPath(String.valueOf(index)).build();
     }
 

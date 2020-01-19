@@ -4,9 +4,9 @@ import android.content.ContentValues;
 
 import com.itea.practice.components.PingLog;
 
-public class MapperValuesToLog {
+class MapperValuesToLog {
 
-    public static PingLog map(ContentValues values) {
+    static PingLog map(ContentValues values) {
 
         return new PingLog(
                 values.getAsInteger(PingHistoryProvider.RESULT) == PingHistoryProvider.SUCCESS,

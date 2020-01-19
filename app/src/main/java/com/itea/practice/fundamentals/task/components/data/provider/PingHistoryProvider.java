@@ -196,10 +196,12 @@ public class PingHistoryProvider extends ContentProvider {
             storage.insertLog(log);
 
             if (getContext() != null) {
-                getContext().getContentResolver().notifyChange(
-                        PingHistoryUriBuilder.build(storage.getLogs().indexOf(log)),
-                        null
-                );
+                int index = storage.getLogs().indexOf(log);
+
+                Uri resultUri = PingHistoryUriBuilder.build(index);
+                getContext().getContentResolver().notifyChange(resultUri, null);
+
+                return resultUri;
             }
         }
 

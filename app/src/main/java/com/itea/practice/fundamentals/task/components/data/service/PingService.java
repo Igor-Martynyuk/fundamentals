@@ -13,31 +13,14 @@ import com.itea.practice.fundamentals.task.components.data.provider.PingHistoryU
 import com.itea.practice.fundamentals.task.components.data.provider.MapperLogToValues;
 
 public class PingService extends Service {
-    private PingExecutor executor;
     private PingServiceBinder binder;
-
-    private PingCallBack callBack = new PingCallBack() {
-        @Override
-        public void onSuccess(long started, long finished) {
-            if (binder != null) {
-                PingLog log = new PingLog(true, finished - started, started);
-
-                getContentResolver().insert(PingHistoryUriBuilder.build(), MapperLogToValues.map(log));
-                binder.onPing(log);
-            }
-        }
-
-        @Override
-        public void onFailure(long started, long finished) {
-            if (binder != null) {
-                binder.onPing(new PingLog(false, finished - started, started));
-            }
-        }
-    };
+    private PingExecutor executor;
+    private PingCallBack callBack;
 
     @Override
     public void onCreate() {
         this.executor = new PingExecutor();
+        this.callBack = new CallBack();
 
         super.onCreate();
     }
@@ -52,10 +35,6 @@ public class PingService extends Service {
     public IBinder onBind(Intent intent) {
         if (binder == null) {
             binder = new PingServiceBinder() {
-                @Override
-                public boolean isActive() {
-                    return executor.isActive();
-                }
 
                 @Override
                 public void startPingProcess() {
@@ -75,6 +54,23 @@ public class PingService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+    }
+
+    private class CallBack implements PingCallBack {
+        private void sendPingLog(long started, long finished) {
+            PingLog log = new PingLog(true, finished - started, started);
+            getContentResolver().insert(PingHistoryUriBuilder.build(), MapperLogToValues.map(log));
+        }
+
+        @Override
+        public void onSuccess(long started, long finished) {
+            sendPingLog(started, finished);
+        }
+
+        @Override
+        public void onFailure(long started, long finished) {
+            sendPingLog(started, finished);
+        }
     }
 
 }
