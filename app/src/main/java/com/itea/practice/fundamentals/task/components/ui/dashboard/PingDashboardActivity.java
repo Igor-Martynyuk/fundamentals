@@ -17,20 +17,23 @@ import com.itea.practice.fundamentals.R;
 import com.itea.practice.fundamentals.task.components.manager.history.CommonDurationListener;
 import com.itea.practice.fundamentals.task.components.manager.history.LogReceivedListener;
 import com.itea.practice.fundamentals.task.components.manager.history.PingHistoryManager;
+import com.itea.practice.fundamentals.task.components.manager.internet.InternetListener;
+import com.itea.practice.fundamentals.task.components.manager.internet.InternetManager;
+import com.itea.practice.fundamentals.task.components.manager.internet.InternetState;
 import com.itea.practice.fundamentals.task.components.manager.status.PingStatusManager;
-import com.itea.practice.fundamentals.task.components.data.receiver.InternetReceiver;
+import com.itea.practice.fundamentals.task.components.manager.status.StatusListener;
 import com.itea.practice.fundamentals.task.components.ui.history.PingHistoryActivity;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class PingDashboardActivity extends AppCompatActivity implements View.OnClickListener,
-        PingStatusManager.Listener,
-        InternetReceiver.Listener,
+        StatusListener,
+        InternetListener,
         CommonDurationListener,
         LogReceivedListener {
 
-    private InternetReceiver internetReceiver;
-    private PingStatusManager statusManager;
+    private InternetManager internetManager;
     private PingHistoryManager historyManager;
+    private PingStatusManager statusManager;
     private PingStatusManager.Status pingStatus;
 
     private ImageView btnTumbler;
@@ -63,7 +66,7 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
 
         this.statusManager = getApp().getPingStateManager();
         this.historyManager = getApp().getPingHistoryManager();
-        this.internetReceiver = getApp().getInternetReceiver();
+        this.internetManager = getApp().getInternetManager();
 
         this.outputConnection = findViewById(R.id.output_connection);
         this.outputStatus = findViewById(R.id.output_status);
@@ -94,8 +97,8 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
             outputDurationLast.setText("_");
         }
 
+        internetManager.addListener(this);
         statusManager.addStatusListener(this);
-        internetReceiver.addListener(this);
         historyManager.addCommonDelayListener(this);
         historyManager.addLogReceivedListener(this);
     }
@@ -104,8 +107,8 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
     protected void onPause() {
         super.onPause();
 
+        internetManager.removeListener(this);
         statusManager.removeStatusListener(this);
-        internetReceiver.removeListener(this);
         historyManager.removeCommonDelayListener(this);
         historyManager.removeLogReceivedListener(this);
     }
@@ -147,8 +150,8 @@ public class PingDashboardActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onInternetChanged(InternetReceiver.Type type) {
-        switch (type) {
+    public void onInternetStateChanged(InternetState value) {
+        switch (value) {
             case NONE:
                 outputConnection.setText(R.string.connection_none);
                 break;

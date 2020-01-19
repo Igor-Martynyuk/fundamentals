@@ -36,8 +36,8 @@ public class PingAdapter extends RecyclerView.Adapter<PingItemHolder> {
 
     void insert(PingLog value) {
         logs.add(value);
-        notifyItemChanged(logs.size() - 1);
 
+        notifyItemChanged(logs.size() - 1);
     }
 
     @NonNull

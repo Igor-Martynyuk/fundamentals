@@ -4,38 +4,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.Nullable;
+
 import com.itea.practice.components.InternetResolver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InternetReceiver extends BroadcastReceiver {
+    private String currentType;
     private volatile List<Listener> listeners = new ArrayList<>();
-    private Type lastType = Type.NONE;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        InternetResolver resolver = new InternetResolver(context);
-        String typeValue = resolver.determineConnection();
+        currentType = new InternetResolver(context).determineConnection();
 
-        Type currentType = Type.NONE;
-        if (typeValue != null) {
-            currentType = typeValue.equals("WIFI") ? Type.WIFI : Type.MOBILE;
+        for (Listener listener : this.listeners) {
+            listener.onInternetChanged(currentType);
         }
-
-        if (currentType != lastType) {
-            for (Listener listener : this.listeners) {
-                listener.onInternetChanged(currentType);
-            }
-        }
-
-        lastType = currentType;
     }
 
     public void addListener(Listener listener) {
         this.listeners.add(listener);
 
-        listener.onInternetChanged(lastType);
+        listener.onInternetChanged(currentType);
     }
 
     public void removeListener(Listener listener) {
@@ -43,12 +35,6 @@ public class InternetReceiver extends BroadcastReceiver {
     }
 
     public interface Listener {
-        void onInternetChanged(Type type);
-    }
-
-    public enum Type {
-        NONE,
-        MOBILE,
-        WIFI
+        void onInternetChanged(@Nullable String type);
     }
 }

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
+
 import com.itea.practice.fundamentals.task.components.data.receiver.InternetReceiver;
 import com.itea.practice.fundamentals.task.components.data.service.PingService;
 import com.itea.practice.fundamentals.task.components.data.service.PingServiceBinder;
@@ -17,10 +19,10 @@ public class PingStatusManager {
     private Context context;
     private InternetReceiver internetReceiver;
     private InternetListener internetListener;
-    private InternetReceiver.Type currentConnectionType;
+    private String currentConnectionType;
     private PingServiceBinder serviceBinder;
     private PingServiceConnection serviceConnection;
-    private List<Listener> statusListeners;
+    private List<StatusListener> statusListeners;
     private Status currentStatus;
 
     public PingStatusManager(Context context, InternetReceiver internetReceiver) {
@@ -28,7 +30,7 @@ public class PingStatusManager {
 
         this.internetReceiver = internetReceiver;
         this.internetListener = new InternetListener();
-        this.currentConnectionType = InternetReceiver.Type.NONE;
+        this.currentConnectionType = null;
 
         this.serviceConnection = new PingServiceConnection();
         this.statusListeners = new ArrayList<>();
@@ -36,7 +38,7 @@ public class PingStatusManager {
     }
 
     private void updateStatus(Status value) {
-        for (Listener listener : statusListeners) {
+        for (StatusListener listener : statusListeners) {
             listener.onPingStatusChanged(value);
         }
 
@@ -47,7 +49,7 @@ public class PingStatusManager {
         serviceBinder = null;
 
         internetReceiver.removeListener(internetListener);
-        currentConnectionType = InternetReceiver.Type.NONE;
+        currentConnectionType = null;
 
         updateStatus(Status.NONE);
     }
@@ -66,12 +68,12 @@ public class PingStatusManager {
         dispose();
     }
 
-    public void addStatusListener(Listener listener) {
+    public void addStatusListener(StatusListener listener) {
         statusListeners.add(listener);
         listener.onPingStatusChanged(currentStatus);
     }
 
-    public void removeStatusListener(Listener listener) {
+    public void removeStatusListener(StatusListener listener) {
         statusListeners.remove(listener);
     }
 
@@ -90,23 +92,19 @@ public class PingStatusManager {
 
     private class InternetListener implements InternetReceiver.Listener {
         @Override
-        public void onInternetChanged(InternetReceiver.Type type) {
-            if (currentConnectionType == InternetReceiver.Type.NONE && type != InternetReceiver.Type.NONE) {
+        public void onInternetChanged(@Nullable String type) {
+            if (currentConnectionType == null && type != null) {
                 serviceBinder.startPingProcess();
                 updateStatus(Status.ACTIVE);
             }
 
-            if (currentConnectionType != InternetReceiver.Type.NONE && type == InternetReceiver.Type.NONE) {
+            if (currentConnectionType != null && type == null) {
                 serviceBinder.stopPingProcess();
                 updateStatus(Status.STARTED);
             }
 
             currentConnectionType = type;
         }
-    }
-
-    public interface Listener {
-        void onPingStatusChanged(Status value);
     }
 
     public enum Status {

@@ -33,6 +33,7 @@ public class PingHistoryManager {
         this.delayListeners = new ArrayList<>();
         this.logReceivedListeners = new ArrayList<>();
 
+        //Ассинхронка. Пока не партесь
         Handler handler = new Handler(Looper.getMainLooper());
         ContentObserver observer = new ContentObserver(handler) {
             @Override
@@ -104,7 +105,6 @@ public class PingHistoryManager {
             listener.onPingReceived(log);
         }
     }
-
 
     @SuppressWarnings("ConstantConditions")
     public long getCommonDuration() throws NullPointerException {
