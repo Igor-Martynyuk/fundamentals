@@ -11,9 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.itea.practice.components.PingLog;
 import com.itea.practice.fundamentals.FundamentalsApp;
 import com.itea.practice.fundamentals.R;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 import com.itea.practice.fundamentals.task.components.manager.history.CommonDurationListener;
 import com.itea.practice.fundamentals.task.components.manager.history.LogReceivedListener;
 import com.itea.practice.fundamentals.task.components.manager.history.PingHistoryManager;

@@ -9,7 +9,7 @@ import android.os.Looper;
 
 import androidx.annotation.Nullable;
 
-import com.itea.practice.components.PingLog;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 import com.itea.practice.fundamentals.task.components.data.provider.PingHistoryProvider;
 import com.itea.practice.fundamentals.task.components.data.provider.PingHistoryUriBuilder;
 

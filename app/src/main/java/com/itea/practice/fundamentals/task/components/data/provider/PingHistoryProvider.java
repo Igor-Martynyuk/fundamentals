@@ -9,9 +9,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.itea.practice.components.PingFilter;
-import com.itea.practice.components.PingLog;
-import com.itea.practice.components.PingStatsStorage;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;

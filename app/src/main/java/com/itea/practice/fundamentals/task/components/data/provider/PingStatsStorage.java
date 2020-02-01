@@ -1,4 +1,4 @@
-package com.itea.practice.components;
+package com.itea.practice.fundamentals.task.components.data.provider;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")

@@ -6,9 +6,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.itea.practice.components.PingCallBack;
-import com.itea.practice.components.PingExecutor;
-import com.itea.practice.components.PingLog;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 import com.itea.practice.fundamentals.task.components.data.provider.PingHistoryUriBuilder;
 import com.itea.practice.fundamentals.task.components.data.provider.MapperLogToValues;
 

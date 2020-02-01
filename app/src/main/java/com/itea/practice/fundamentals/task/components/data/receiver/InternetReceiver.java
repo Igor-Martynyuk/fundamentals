@@ -6,8 +6,6 @@ import android.content.Intent;
 
 import androidx.annotation.Nullable;
 
-import com.itea.practice.components.InternetResolver;
-
 import java.util.ArrayList;
 import java.util.List;
 

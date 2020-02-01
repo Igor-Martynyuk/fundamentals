@@ -2,7 +2,7 @@ package com.itea.practice.fundamentals.task.components.data.provider;
 
 import android.content.ContentValues;
 
-import com.itea.practice.components.PingLog;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 
 public class MapperLogToValues {
 

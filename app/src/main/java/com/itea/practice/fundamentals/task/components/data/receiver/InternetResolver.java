@@ -1,4 +1,4 @@
-package com.itea.practice.components;
+package com.itea.practice.fundamentals.task.components.data.receiver;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

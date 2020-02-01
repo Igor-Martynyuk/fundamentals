@@ -1,4 +1,4 @@
-package com.itea.practice.components;
+package com.itea.practice.fundamentals.task.components.data;
 
 public class PingLog {
     private boolean result;

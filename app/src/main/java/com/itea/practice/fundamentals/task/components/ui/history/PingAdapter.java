@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.itea.practice.components.PingLog;
 import com.itea.practice.fundamentals.R;
+import com.itea.practice.fundamentals.task.components.data.PingLog;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
