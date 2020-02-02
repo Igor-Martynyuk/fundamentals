@@ -29,7 +29,7 @@
     <string name="duration_units">%d ms</string>
     <string name="index">%d.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--Sources-->
+    <string name="loading">Loading %d %</string>
 
 </resources>

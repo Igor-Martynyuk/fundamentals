@@ -1,5 +1,6 @@
 package com.itea.practice.fundamentals.task.data.source.asssets;
 
+import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,53 +23,64 @@ public class ThreadAssetsFragment extends AssetsFragment {
         super.onResume();
 
         progress.setVisibility(View.VISIBLE);
+        new Thread(new LoadImagesAction()).start();
+    }
 
-        Thread thread = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            final List<Bitmap> result = new ArrayList<>();
+    private class LoadImagesAction implements Runnable {
+        @Override
+        public void run() {
+            try {
+                final List<Bitmap> result = new ArrayList<>();
 
-                            AssetManager manager = requireContext().getAssets();
-                            final String[] fileNames = manager.list(imgDitName);
-                            assert fileNames != null;
+                AssetManager manager = requireContext().getAssets();
+                final String[] fileNames = manager.list(imgDitName);
+                assert fileNames != null;
 
-                            for (String fileName : fileNames) {
-                                Thread.sleep(300);
+                for (String fileName : fileNames) {
+                    Thread.sleep(300);
 
-                                InputStream stream = manager.open(imgDitName + File.separator + fileName);
-                                Bitmap image = BitmapFactory.decodeStream(stream);
-                                result.add(image);
+                    InputStream stream = manager.open(imgDitName + File.separator + fileName);
+                    Bitmap image = BitmapFactory.decodeStream(stream);
+                    result.add(image);
 
-                                mainThreadHandel.post(
-                                        new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                float percentage = (float) result.size() / (float) fileNames.length * 100;
-                                                outputProgressPercentage.setText("Loading " + (int) percentage + "%");
-                                            }
-                                        }
-                                );
-                            }
+                    int percentage = Math.round((float) result.size() / (float) fileNames.length * 100);
 
-                            mainThreadHandel.post(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            grid.setAdapter(new ImagesAdapter(requireContext(), result));
-                                            progress.setVisibility(View.GONE);
-                                        }
-                                    }
-                            );
-                        } catch (IOException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    mainThreadHandel.post(new UpdatePercentageMessage(percentage));
                 }
-        );
 
-        thread.start();
+                mainThreadHandel.post(new SetupListMessage(result));
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class UpdatePercentageMessage implements Runnable {
+        private int value;
+
+        UpdatePercentageMessage(int value) {
+            this.value = value;
+        }
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void run() {
+            outputProgressPercentage.setText("Loading " + value + "%");
+        }
+    }
+
+    private class SetupListMessage implements Runnable {
+        private List<Bitmap> data;
+
+        public SetupListMessage(List<Bitmap> data) {
+            this.data = data;
+        }
+
+        @Override
+        public void run() {
+            grid.setAdapter(new ImagesAdapter(requireContext(), data));
+            progress.setVisibility(View.GONE);
+        }
     }
 
 }

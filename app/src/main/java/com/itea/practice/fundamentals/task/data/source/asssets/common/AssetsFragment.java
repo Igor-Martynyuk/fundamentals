@@ -33,9 +33,9 @@ public abstract class AssetsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         progress = view.findViewById(R.id.group_progress);
         outputProgressPercentage = view.findViewById(R.id.output_progress_percentage);
-
         grid = view.findViewById(R.id.grid);
     }
 
