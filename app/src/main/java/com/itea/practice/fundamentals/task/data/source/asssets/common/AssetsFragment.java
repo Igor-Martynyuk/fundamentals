@@ -1,5 +1,6 @@
 package com.itea.practice.fundamentals.task.data.source.asssets.common;
 
+import android.content.res.AssetManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,24 +11,40 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.itea.practice.fundamentals.R;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class AssetsFragment extends Fragment {
     protected String imgDitName = "img";
+    protected List<String> imgNames;
+    protected AssetManager manager;
+
     protected View progress;
     protected TextView outputProgressPercentage;
 
-    protected RecyclerView grid;
-    protected final Handler mainThreadHandel = new Handler(Looper.getMainLooper());
+    protected RecyclerView list;
+    protected final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_assets, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        manager = requireContext().getAssets();
+        imgNames = new ArrayList<>();
+
+        try {
+            //noinspection ConstantConditions
+            imgNames.addAll(Arrays.asList(manager.list(imgDitName)));
+        } catch (IOException | NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -36,13 +53,13 @@ public abstract class AssetsFragment extends Fragment {
 
         progress = view.findViewById(R.id.group_progress);
         outputProgressPercentage = view.findViewById(R.id.output_progress_percentage);
-        grid = view.findViewById(R.id.grid);
+        list = view.findViewById(R.id.output_images);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        grid.setLayoutManager(new LinearLayoutManager(getContext()));
+        list.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

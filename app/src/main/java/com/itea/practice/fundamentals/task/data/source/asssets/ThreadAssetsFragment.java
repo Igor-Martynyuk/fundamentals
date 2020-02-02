@@ -1,12 +1,15 @@
 package com.itea.practice.fundamentals.task.data.source.asssets;
 
 import android.annotation.SuppressLint;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.itea.practice.fundamentals.R;
 import com.itea.practice.fundamentals.task.data.source.asssets.common.AssetsFragment;
 import com.itea.practice.fundamentals.task.data.source.asssets.common.ImagesAdapter;
 
@@ -17,48 +20,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreadAssetsFragment extends AssetsFragment {
+    private Thread loader;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_assets_thread, container, false);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
 
         progress.setVisibility(View.VISIBLE);
-        new Thread(new LoadImagesAction()).start();
+
+        loader = new Thread(new LoadImagesTask());
+        loader.start();
     }
 
-    private class LoadImagesAction implements Runnable {
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        loader.interrupt();
+    }
+
+    private class LoadImagesTask implements Runnable {
         @Override
         public void run() {
             try {
                 final List<Bitmap> result = new ArrayList<>();
 
-                AssetManager manager = requireContext().getAssets();
-                final String[] fileNames = manager.list(imgDitName);
-                assert fileNames != null;
-
-                for (String fileName : fileNames) {
+                for (String fileName : imgNames) {
                     Thread.sleep(300);
 
                     InputStream stream = manager.open(imgDitName + File.separator + fileName);
                     Bitmap image = BitmapFactory.decodeStream(stream);
                     result.add(image);
 
-                    int percentage = Math.round((float) result.size() / (float) fileNames.length * 100);
+                    int percentage = Math.round((float) result.size() / (float) imgNames.size() * 100);
 
-                    mainThreadHandel.post(new UpdatePercentageMessage(percentage));
+                    mainThreadHandler.post(new UpdatePercentageTask(percentage));
                 }
 
-                mainThreadHandel.post(new SetupListMessage(result));
+                mainThreadHandler.post(new SetupListTask(result));
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private class UpdatePercentageMessage implements Runnable {
+    private class UpdatePercentageTask implements Runnable {
         private int value;
 
-        UpdatePercentageMessage(int value) {
+        UpdatePercentageTask(int value) {
             this.value = value;
         }
 
@@ -69,16 +83,16 @@ public class ThreadAssetsFragment extends AssetsFragment {
         }
     }
 
-    private class SetupListMessage implements Runnable {
+    private class SetupListTask implements Runnable {
         private List<Bitmap> data;
 
-        public SetupListMessage(List<Bitmap> data) {
+        SetupListTask(List<Bitmap> data) {
             this.data = data;
         }
 
         @Override
         public void run() {
-            grid.setAdapter(new ImagesAdapter(requireContext(), data));
+            list.setAdapter(new ImagesAdapter(requireContext(), data));
             progress.setVisibility(View.GONE);
         }
     }

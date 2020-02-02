@@ -30,6 +30,7 @@
     <string name="index">%d.</string>
 
     <!--Sources-->
+    <string name="load">Load</string>
     <string name="loading">Loading %d %</string>
 
 </resources>
