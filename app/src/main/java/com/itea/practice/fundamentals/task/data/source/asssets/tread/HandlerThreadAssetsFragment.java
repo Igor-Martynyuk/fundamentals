@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.data.source.asssets;
+package com.itea.practice.fundamentals.task.data.source.asssets.tread;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -110,7 +110,7 @@ public class HandlerThreadAssetsFragment extends AssetsFragment implements View.
 
                 Thread.sleep(1000);
 
-                InputStream stream = manager.open(imgDitName + File.separator + imgName);
+                InputStream stream = assetManager.open(imgDitName + File.separator + imgName);
                 final Bitmap image = BitmapFactory.decodeStream(stream);
                 mainThreadHandler.post(new UpdateUITask(image));
 

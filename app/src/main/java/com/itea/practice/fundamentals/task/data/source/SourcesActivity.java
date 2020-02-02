@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.itea.practice.fundamentals.R;
-import com.itea.practice.fundamentals.task.data.source.asssets.HandlerThreadAssetsFragment;
-import com.itea.practice.fundamentals.task.data.source.asssets.ThreadAssetsFragment;
+import com.itea.practice.fundamentals.task.data.source.asssets.tread.HandlerThreadAssetsFragment;
+import com.itea.practice.fundamentals.task.data.source.asssets.loader.LoaderAssetsFragment;
+import com.itea.practice.fundamentals.task.data.source.asssets.tread.ThreadAssetsFragment;
+import com.itea.practice.fundamentals.task.data.source.asssets.task.AsyncTaskAssetsFragment;
 import com.itea.practice.fundamentals.task.data.source.prefs.PrefsFragment;
 
 public class SourcesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -48,9 +50,11 @@ public class SourcesActivity extends AppCompatActivity implements AdapterView.On
             case 2:
                 navigate(new HandlerThreadAssetsFragment(), true);
                 break;
-
             case 3:
+                navigate(new AsyncTaskAssetsFragment(), true);
                 break;
+            case 4:
+                navigate(new LoaderAssetsFragment(), true);
         }
     }
 

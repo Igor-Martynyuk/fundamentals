@@ -31,6 +31,8 @@ public class SourcesFragment extends Fragment {
                         "SharedPreference",
                         "Assets(Thread)",
                         "Assets(HandlerThread)",
+                        "Assets(AsyncTask)",
+                        "Assets(Loader)",
                         "SQLite",
                         "WebAPI"
                 }

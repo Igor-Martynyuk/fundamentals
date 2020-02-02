@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.data.source.asssets;
+package com.itea.practice.fundamentals.task.data.source.asssets.tread;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -51,14 +51,13 @@ public class ThreadAssetsFragment extends AssetsFragment {
                 final List<Bitmap> result = new ArrayList<>();
 
                 for (String fileName : imgNames) {
-                    Thread.sleep(300);
+                    Thread.sleep(150);
 
-                    InputStream stream = manager.open(imgDitName + File.separator + fileName);
+                    InputStream stream = assetManager.open(imgDitName + File.separator + fileName);
                     Bitmap image = BitmapFactory.decodeStream(stream);
                     result.add(image);
 
                     int percentage = Math.round((float) result.size() / (float) imgNames.size() * 100);
-
                     mainThreadHandler.post(new UpdatePercentageTask(percentage));
                 }
 
@@ -79,7 +78,7 @@ public class ThreadAssetsFragment extends AssetsFragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void run() {
-            outputProgressPercentage.setText("Loading " + value + "%");
+            updateProgressPercentage(value);
         }
     }
 

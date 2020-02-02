@@ -24,7 +24,7 @@ import java.util.List;
 public abstract class AssetsFragment extends Fragment {
     protected String imgDitName = "img";
     protected List<String> imgNames;
-    protected AssetManager manager;
+    protected AssetManager assetManager;
 
     protected View progress;
     protected TextView outputProgressPercentage;
@@ -32,17 +32,21 @@ public abstract class AssetsFragment extends Fragment {
     protected RecyclerView list;
     protected final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
+    protected void updateProgressPercentage(int value) {
+        outputProgressPercentage.setText("Loading " + value + "%");
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        manager = requireContext().getAssets();
+        assetManager = requireContext().getAssets();
         imgNames = new ArrayList<>();
 
         try {
             //noinspection ConstantConditions
-            imgNames.addAll(Arrays.asList(manager.list(imgDitName)));
-        } catch (IOException | NullPointerException e){
+            imgNames.addAll(Arrays.asList(assetManager.list(imgDitName)));
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
     }
