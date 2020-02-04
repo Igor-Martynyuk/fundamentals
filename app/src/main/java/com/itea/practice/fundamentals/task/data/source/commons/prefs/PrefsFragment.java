@@ -1,78 +1,41 @@
-package com.itea.practice.fundamentals.task.data.source.prefs;
+package com.itea.practice.fundamentals.task.data.source.commons.prefs;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.itea.practice.fundamentals.R;
+import com.itea.practice.fundamentals.task.data.source.commons.CommonSourceFragment;
 
-public class PrefsFragment extends Fragment {
-
-    private final String KEY_HUMANS = "humans";
+public class PrefsFragment extends CommonSourceFragment {
 
     private SharedPreferences preferences;
-    private HumansListener humansListener;
-
-    private EditText input;
-    private InputFinishedListener inputFinishedListener;
-
-    private ListView output;
     private HumanAdapter adapter;
 
-    private View btnClear;
-    private ClearBtnListener clearBtnListener;
+    private HumansListener humansListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-
-        humansListener = new HumansListener();
-
         adapter = new HumanAdapter();
-
-        inputFinishedListener = new InputFinishedListener();
-        clearBtnListener = new ClearBtnListener();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_prefs, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        input = requireView().findViewById(R.id.input_human);
-        input.setOnEditorActionListener(inputFinishedListener);
-
-        output = requireView().findViewById(R.id.output_humans);
-        output.setAdapter(adapter);
-
-        btnClear = requireView().findViewById(R.id.btn_clear);
-        btnClear.setOnClickListener(clearBtnListener);
-
+        humansListener = new HumansListener();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        adapter.notifyDataSetChanged();
+        output.setAdapter(adapter);
         preferences.registerOnSharedPreferenceChangeListener(humansListener);
     }
 
@@ -83,32 +46,23 @@ public class PrefsFragment extends Fragment {
         preferences.unregisterOnSharedPreferenceChangeListener(humansListener);
     }
 
+    @Override
+    protected void onClearBtnPressed() {
+        preferences.edit().clear().apply();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onInputFinished() {
+        preferences.edit().putString("humans" + preferences.getAll().size(), input.getText().toString()).apply();
+
+        input.setText("");
+        input.clearFocus();
+    }
+
     private class HumansListener implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    private class InputFinishedListener implements TextView.OnEditorActionListener {
-        @Override
-        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-            preferences.edit().putString(
-                    KEY_HUMANS + preferences.getAll().size(),
-                    view.getText().toString()
-            ).apply();
-
-            view.setText("");
-            view.clearFocus();
-
-            return false;
-        }
-    }
-
-    private class ClearBtnListener implements View.OnClickListener {
-        @Override
-        public void onClick(View ignored) {
-            preferences.edit().clear().apply();
             adapter.notifyDataSetChanged();
         }
     }

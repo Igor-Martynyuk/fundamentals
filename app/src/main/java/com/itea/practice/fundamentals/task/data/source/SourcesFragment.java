@@ -29,11 +29,11 @@ public class SourcesFragment extends Fragment {
                 android.R.layout.simple_list_item_1,
                 new String[]{
                         "SharedPreference",
+                        "SQLite",
                         "Assets(Thread)",
                         "Assets(HandlerThread)",
                         "Assets(AsyncTask)",
                         "Assets(Loader)",
-                        "SQLite",
                         "WebAPI"
                 }
         );

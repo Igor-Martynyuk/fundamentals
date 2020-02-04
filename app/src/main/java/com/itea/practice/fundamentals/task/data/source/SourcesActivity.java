@@ -14,7 +14,8 @@ import com.itea.practice.fundamentals.task.data.source.asssets.tread.HandlerThre
 import com.itea.practice.fundamentals.task.data.source.asssets.loader.LoaderAssetsFragment;
 import com.itea.practice.fundamentals.task.data.source.asssets.tread.ThreadAssetsFragment;
 import com.itea.practice.fundamentals.task.data.source.asssets.task.AsyncTaskAssetsFragment;
-import com.itea.practice.fundamentals.task.data.source.prefs.PrefsFragment;
+import com.itea.practice.fundamentals.task.data.source.commons.prefs.PrefsFragment;
+import com.itea.practice.fundamentals.task.data.source.commons.sqlite.SQLiteFragment;
 
 public class SourcesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -45,15 +46,18 @@ public class SourcesActivity extends AppCompatActivity implements AdapterView.On
                 navigate(new PrefsFragment(), true);
                 break;
             case 1:
-                navigate(new ThreadAssetsFragment(), true);
+                navigate(new SQLiteFragment(), true);
                 break;
             case 2:
-                navigate(new HandlerThreadAssetsFragment(), true);
+                navigate(new ThreadAssetsFragment(), true);
                 break;
             case 3:
-                navigate(new AsyncTaskAssetsFragment(), true);
+                navigate(new HandlerThreadAssetsFragment(), true);
                 break;
             case 4:
+                navigate(new AsyncTaskAssetsFragment(), true);
+                break;
+            case 5:
                 navigate(new LoaderAssetsFragment(), true);
         }
     }
