@@ -1,11 +1,11 @@
-package com.itea.practice.fundamentals.task.data.source.commons.sqlite;
+package com.itea.practice.fundamentals.task.data.source.sqlite;
 
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.itea.practice.fundamentals.task.data.source.commons.CommonSourceFragment;
+import com.itea.practice.fundamentals.task.data.source.CommonSourceFragment;
 
 public class SQLiteFragment extends CommonSourceFragment implements SQLiteHumansAdapter.DeleteBtnListener {
     private SQLiteHumansHelper helper;

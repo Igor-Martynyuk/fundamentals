@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.data.source.commons.sqlite;
+package com.itea.practice.fundamentals.task.data.source.sqlite;
 
 import android.content.Context;
 import android.database.Cursor;

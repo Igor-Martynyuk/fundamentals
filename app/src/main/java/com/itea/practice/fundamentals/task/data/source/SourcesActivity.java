@@ -14,8 +14,9 @@ import com.itea.practice.fundamentals.task.data.source.asssets.tread.HandlerThre
 import com.itea.practice.fundamentals.task.data.source.asssets.loader.LoaderAssetsFragment;
 import com.itea.practice.fundamentals.task.data.source.asssets.tread.ThreadAssetsFragment;
 import com.itea.practice.fundamentals.task.data.source.asssets.task.AsyncTaskAssetsFragment;
-import com.itea.practice.fundamentals.task.data.source.commons.prefs.PrefsFragment;
-import com.itea.practice.fundamentals.task.data.source.commons.sqlite.SQLiteFragment;
+import com.itea.practice.fundamentals.task.data.source.prefs.PrefsFragment;
+import com.itea.practice.fundamentals.task.data.source.sqlite.SQLiteFragment;
+import com.itea.practice.fundamentals.task.data.source.web.WebImageFragment;
 
 public class SourcesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -59,6 +60,8 @@ public class SourcesActivity extends AppCompatActivity implements AdapterView.On
                 break;
             case 5:
                 navigate(new LoaderAssetsFragment(), true);
+            case 6:
+                navigate(new WebImageFragment(), true);
         }
     }
 

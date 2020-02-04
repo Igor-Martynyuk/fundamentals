@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.itea.practice.fundamentals">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -14,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".task.data.source.SourcesActivity"></activity>
+
+        <activity android:name=".task.data.source.SourcesActivity" />
+
         <activity
             android:name=".start.splash.SplashActivity"
             android:noHistory="true"
@@ -25,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".start.menu.MenuActivity" />
         <activity android:name=".task.components.ui.dashboard.PingDashboardActivity" />
         <activity android:name=".task.components.ui.history.PingHistoryActivity" />

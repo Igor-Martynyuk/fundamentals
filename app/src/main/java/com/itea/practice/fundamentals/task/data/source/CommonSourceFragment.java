@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.data.source.commons;
+package com.itea.practice.fundamentals.task.data.source;
 
 import android.os.Bundle;
 import android.view.KeyEvent;

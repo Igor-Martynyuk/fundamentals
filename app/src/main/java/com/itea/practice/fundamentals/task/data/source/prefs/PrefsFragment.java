@@ -1,4 +1,4 @@
-package com.itea.practice.fundamentals.task.data.source.commons.prefs;
+package com.itea.practice.fundamentals.task.data.source.prefs;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.itea.practice.fundamentals.R;
-import com.itea.practice.fundamentals.task.data.source.commons.CommonSourceFragment;
+import com.itea.practice.fundamentals.task.data.source.CommonSourceFragment;
 
 public class PrefsFragment extends CommonSourceFragment {
 
