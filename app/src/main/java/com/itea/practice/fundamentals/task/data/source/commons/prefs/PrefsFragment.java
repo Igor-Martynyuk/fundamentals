@@ -55,9 +55,6 @@ public class PrefsFragment extends CommonSourceFragment {
     @Override
     protected void onInputFinished() {
         preferences.edit().putString("humans" + preferences.getAll().size(), input.getText().toString()).apply();
-
-        input.setText("");
-        input.clearFocus();
     }
 
     private class HumansListener implements SharedPreferences.OnSharedPreferenceChangeListener {

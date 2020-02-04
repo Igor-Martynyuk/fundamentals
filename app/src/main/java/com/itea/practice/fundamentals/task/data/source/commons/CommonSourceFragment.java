@@ -46,6 +46,10 @@ public abstract class CommonSourceFragment extends Fragment implements View.OnCl
     @Override
     public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
         onInputFinished();
+
+        input.clearFocus();
+        input.setText("");
+
         return false;
     }
 
